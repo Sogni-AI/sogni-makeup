@@ -21,6 +21,7 @@ import {
 import { getURLs } from '@/config/urls';
 import { sogniAuth } from '@/services/sogniAuth';
 import { FrontendSogniClientAdapter } from '@/services/frontendSogniAdapter';
+import { getPaymentMethod } from '@/services/walletService';
 
 // ---------------------------------------------------------------------------
 // Context shape
@@ -390,6 +391,7 @@ export function AppProvider({ children }: AppProviderProps) {
         outputFormat: settings.outputFormat,
         numberOfMedia: GENERATION_DEFAULTS.numberOfMedia,
         denoisingStrength: transformation.intensity,
+        tokenType: authState.isAuthenticated ? getPaymentMethod() : undefined,
       };
 
       // 3. Set generating state

@@ -40,6 +40,7 @@ export interface GenerationParams {
   outputFormat: string;
   numberOfMedia: number;
   denoisingStrength?: number;
+  tokenType?: string;
 }
 
 export interface GenerationResult {
