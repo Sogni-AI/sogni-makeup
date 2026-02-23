@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://makeover.sogni.ai">Live App</a> &nbsp;&bull;&nbsp;
   <a href="https://sogni.ai">Sogni AI</a> &nbsp;&bull;&nbsp;
-  <a href="https://x.com/sogni_ai">@sogni_ai</a>
+  <a href="https://x.com/sogni_protocol">@sogni_protocol</a>
 </p>
 
 <br/>
