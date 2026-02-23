@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OG Banner Generator - Sogni Makeover</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: system-ui;
+      color: #999;
+      padding: 40px;
+    }
+    .instructions {
+      margin-bottom: 24px;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .instructions code {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* === OG Banner === */
+    .og-banner {
+      width: 1200px;
+      height: 630px;
+      position: relative;
+      overflow: hidden;
+      background: #0c0a09;
+      display: flex;
+      flex-shrink: 0;
+    }
+
+    /* Before image - left side */
+    .og-banner .face-left {
+      position: absolute;
+      left: -40px;
+      top: 0;
+      height: 100%;
+      width: 380px;
+      object-fit: cover;
+      object-position: center top;
+      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 60%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 60%, transparent 100%);
+      filter: brightness(0.85);
+    }
+
+    /* After image - right side */
+    .og-banner .face-right {
+      position: absolute;
+      right: -40px;
+      top: 0;
+      height: 100%;
+      width: 380px;
+      object-fit: cover;
+      object-position: center top;
+      mask-image: linear-gradient(to left, transparent 0%, black 8%, black 60%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, transparent 0%, black 8%, black 60%, transparent 100%);
+      filter: brightness(0.85);
+    }
+
+    /* Center content overlay */
+    .og-banner .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      text-align: center;
+      padding: 40px 60px;
+    }
+
+    /* Subtle radial glow behind text */
+    .og-banner .content::before {
+      content: '';
+      position: absolute;
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(12,10,9,0.95) 0%, rgba(12,10,9,0.8) 40%, transparent 70%);
+      z-index: -1;
+    }
+
+    /* Badge */
+    .og-banner .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border: 1px solid rgba(212, 163, 115, 0.3);
+      border-radius: 100px;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(212, 163, 115, 0.9);
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      background: rgba(212, 163, 115, 0.05);
+    }
+    .og-banner .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d4a373;
+      box-shadow: 0 0 8px rgba(212, 163, 115, 0.6);
+    }
+
+    /* Title */
+    .og-banner .title {
+      font-family: 'Cormorant Garamond', 'Georgia', serif;
+      font-size: 72px;
+      font-weight: 600;
+      color: #f5e6d3;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .og-banner .title em {
+      font-style: italic;
+      color: #d4a373;
+    }
+
+    /* Decorative divider */
+    .og-banner .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .og-banner .divider .line {
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(212, 163, 115, 0.5));
+    }
+    .og-banner .divider .line:last-child {
+      background: linear-gradient(to left, transparent, rgba(212, 163, 115, 0.5));
+    }
+    .og-banner .divider .diamond {
+      width: 8px;
+      height: 8px;
+      border: 1px solid rgba(212, 163, 115, 0.5);
+      transform: rotate(45deg);
+    }
+
+    /* Subtitle */
+    .og-banner .subtitle {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: rgba(245, 230, 211, 0.55);
+      line-height: 1.5;
+      max-width: 520px;
+    }
+
+    /* Bottom bar */
+    .og-banner .bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+      z-index: 20;
+    }
+    .og-banner .logo-text {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(245, 230, 211, 0.4);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .og-banner .url-text {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(212, 163, 115, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    /* Arrow between faces */
+    .og-banner .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      opacity: 0.15;
+    }
+    .og-banner .arrow-left {
+      left: 300px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, rgba(212,163,115,0), rgba(212,163,115,1));
+    }
+    .og-banner .arrow-right {
+      right: 300px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to left, rgba(212,163,115,0), rgba(212,163,115,1));
+    }
+
+    /* Preload fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap');
+  </style>
+</head>
+<body>
+  <div class="instructions">
+    <p>OG Banner Preview (1200 &times; 630px) &mdash; Screenshot this banner for the final image.</p>
+    <p>Tip: Use DevTools device mode at exactly 1200px wide, or <code>screencapture</code> / Puppeteer to export.</p>
+  </div>
+
+  <div class="og-banner" id="og-banner">
+    <!-- Before face (left) -->
+    <img class="face-left" src="../public/images/before.png" alt="" />
+
+    <!-- After face (right) -->
+    <img class="face-right" src="../public/images/after.png" alt="" />
+
+    <!-- Center content -->
+    <div class="content">
+      <div class="badge">AI-Powered Atelier</div>
+      <div class="title">Transform Your<br/><em>Look with AI</em></div>
+      <div class="divider">
+        <div class="line"></div>
+        <div class="diamond"></div>
+        <div class="line"></div>
+      </div>
+      <div class="subtitle">Try new hairstyles, makeup, and styles instantly. See how you look before making any real changes.</div>
+    </div>
+
+    <!-- Bottom branding bar -->
+    <div class="bottom-bar">
+      <div class="logo-text">Sogni Makeover</div>
+      <div class="url-text">makeover.sogni.ai</div>
+    </div>
+  </div>
+</body>
+</html>

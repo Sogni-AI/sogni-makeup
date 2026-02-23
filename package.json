@@ -2,6 +2,14 @@
   "name": "sogni-makeover",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sogni-AI/sogni-makeup.git"
+  },
+  "homepage": "https://makeover.sogni.ai",
+  "bugs": {
+    "url": "https://github.com/Sogni-AI/sogni-makeup/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "npx kill-port 5176 && vite --host 0.0.0.0 --port 5176 --strictPort",
@@ -14,7 +22,9 @@
     "prepare": "npm run server:install",
     "preview": "vite preview",
     "validate:useeffect": "node scripts/validate-useeffect.js",
-    "precommit": "npm run validate:useeffect"
+    "precommit": "npm run validate:useeffect",
+    "deploy:production": "bash scripts/deploy-production.sh",
+    "deploy:staging": "bash scripts/deploy-staging.sh"
   },
   "dependencies": {
     "@sogni-ai/sogni-client": "^4.0.0-alpha.64",
