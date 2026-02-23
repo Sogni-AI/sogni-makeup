@@ -28,6 +28,9 @@ function MakeoverStudio() {
     authState,
     demoGenerationsRemaining,
     history,
+    enhanceProgress,
+    isEnhancing,
+    cancelEnhancement,
   } = useApp();
 
   const [selectedCategory, setSelectedCategory] = useState<TransformationCategory>(categoryKeys[0]);
@@ -95,8 +98,19 @@ function MakeoverStudio() {
               <OriginalPhoto imageUrl={originalImageUrl} />
             )}
 
+            {/* Enhancement progress overlay */}
+            {enhanceProgress &&
+              enhanceProgress.status !== 'completed' && (
+              <GenerationProgress
+                progress={enhanceProgress}
+                onCancel={cancelEnhancement}
+                onDismiss={() => {/* enhancement progress clears on its own */}}
+                transformationName="Auto-Enhance"
+              />
+            )}
+
             {/* Generation progress overlay (also shown for error/cancelled so user sees feedback) */}
-            {generationProgress &&
+            {!isEnhancing && generationProgress &&
               generationProgress.status !== 'completed' && (
               <GenerationProgress
                 progress={generationProgress}
@@ -149,7 +163,7 @@ function MakeoverStudio() {
               selectedSubcategory={selectedSubcategory}
               onSelectSubcategory={setSelectedSubcategory}
               onSelectTransformation={handleSelectTransformation}
-              isDisabled={isGenerating}
+              isDisabled={isGenerating || isEnhancing}
               activeTransformationId={currentTransformation?.id ?? null}
             />
           </div>

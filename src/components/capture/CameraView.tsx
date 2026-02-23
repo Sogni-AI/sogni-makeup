@@ -7,7 +7,16 @@ import Button from '@/components/common/Button';
 type CameraState = 'requesting' | 'active' | 'captured' | 'denied' | 'error';
 
 function CameraView() {
-  const { setOriginalImage, setCurrentView } = useApp();
+  const {
+    setOriginalImage,
+    setCurrentView,
+    settings,
+    updateSetting,
+    enhancePhoto,
+    sogniClient,
+    authState,
+    isGenerating,
+  } = useApp();
   const { addToast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -180,7 +189,28 @@ function CameraView() {
 
     setOriginalImage(file);
     setCurrentView('studio');
-  }, [capturedImage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Auto-enhance: run in background after navigating to studio
+    if (settings.autoEnhanceWebcam) {
+      // Extract raw base64 from the data URL
+      const base64 = capturedImage.includes(',') ? capturedImage.split(',')[1] : capturedImage;
+
+      enhancePhoto(base64, sogniClient, authState.isAuthenticated).then(async (result) => {
+        if (!result) return;
+        // Guard: don't replace if user already started a makeover
+        if (isGenerating) return;
+
+        try {
+          const enhancedResponse = await fetch(result.imageUrl);
+          const enhancedBlob = await enhancedResponse.blob();
+          const enhancedFile = new File([enhancedBlob], 'enhanced-capture.jpg', { type: 'image/jpeg' });
+          setOriginalImage(enhancedFile);
+        } catch {
+          // Graceful fallback: original image is already set
+        }
+      });
+    }
+  }, [capturedImage, settings.autoEnhanceWebcam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const flipCamera = useCallback(() => {
     setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
@@ -278,6 +308,23 @@ function CameraView() {
           </>
         )}
       </div>
+
+      {/* Auto-enhance toggle */}
+      {cameraState !== 'captured' && (
+        <div className="pb-2">
+          <button
+            onClick={() => updateSetting('autoEnhanceWebcam', !settings.autoEnhanceWebcam)}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs text-white/40 transition-colors hover:text-white/60"
+          >
+            <span
+              className={`inline-block h-2 w-2 rounded-full transition-colors ${
+                settings.autoEnhanceWebcam ? 'bg-green-400' : 'bg-white/20'
+              }`}
+            />
+            Auto-enhance {settings.autoEnhanceWebcam ? 'on' : 'off'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

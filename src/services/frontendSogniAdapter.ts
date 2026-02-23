@@ -430,6 +430,22 @@ export class FrontendSogniClientAdapter {
           delete sdkParams.sensitiveContentFilter;
         }
 
+        // Convert base64 string contextImages to Blobs for SDK compatibility.
+        // The SDK expects File | Buffer | Blob, not base64 strings.
+        if (sdkParams.contextImages && Array.isArray(sdkParams.contextImages)) {
+          sdkParams.contextImages = sdkParams.contextImages.map((img: any) => {
+            if (typeof img === 'string') {
+              const byteCharacters = atob(img);
+              const byteArray = new Uint8Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteArray[i] = byteCharacters.charCodeAt(i);
+              }
+              return new Blob([byteArray], { type: 'image/jpeg' });
+            }
+            return img;
+          });
+        }
+
         const realProject = await this.realClient.projects.create(sdkParams);
         console.log(`[FrontendAdapter] Project created with ID: ${realProject.id}`);
 

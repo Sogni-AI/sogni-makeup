@@ -11,6 +11,15 @@ export const DEFAULT_SETTINGS: AppSettings = {
   defaultSampler: 'euler',
   defaultScheduler: 'simple',
   outputFormat: 'jpg',
+  autoEnhanceWebcam: true,
+};
+
+export const AUTO_ENHANCE_CONFIG = {
+  prompt:
+    'Professional headshot photograph. Enhance lighting to soft studio lighting. Improve skin clarity and evenness. Sharpen facial details. Add subtle depth-of-field with softly blurred background. Maintain exact same facial features, identity, expression, and pose. Professional corporate portrait quality.',
+  negativePrompt:
+    'deformed, distorted, bad quality, blurry, ugly, disfigured, changed face, different person, altered features, cartoon, painting, illustration',
+  denoisingStrength: 0.35,
 };
 
 export const GENERATION_DEFAULTS = {

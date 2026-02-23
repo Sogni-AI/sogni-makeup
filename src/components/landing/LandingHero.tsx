@@ -45,6 +45,53 @@ function LandingHero() {
         <div className="absolute left-1/4 top-16 h-32 w-px bg-gradient-to-b from-transparent via-primary-400/8 to-transparent" />
       </div>
 
+      {/* Before/After portrait images - mirrored flanking portraits */}
+      <motion.div
+        initial={{ opacity: 0, x: -40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+        className="pointer-events-none absolute left-0 top-0 h-full w-[55%] opacity-25 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-left-[calc(5%-5px)] lg:w-[42%] lg:opacity-100 xl:w-[38%]"
+        style={{
+          maskImage: 'linear-gradient(to right, black 0%, black 96%, transparent 100%), linear-gradient(to top, transparent 0%, black 10%, black 90%, transparent 100%)',
+          maskComposite: 'intersect',
+          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 96%, transparent 100%), linear-gradient(to top, transparent 0%, black 10%, black 90%, transparent 100%)',
+          WebkitMaskComposite: 'source-in',
+        }}
+      >
+        <img
+          src="/images/before.png"
+          alt=""
+          className="h-full w-full object-cover object-right"
+          style={{
+            filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
+            opacity: 0.7,
+          }}
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
+        className="pointer-events-none absolute right-0 top-0 h-full w-[55%] opacity-25 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-right-[calc(5%-5px)] lg:w-[42%] lg:opacity-100 xl:w-[38%]"
+        style={{
+          maskImage: 'linear-gradient(to left, black 0%, black 96%, transparent 100%), linear-gradient(to top, transparent 0%, black 10%, black 90%, transparent 100%)',
+          maskComposite: 'intersect',
+          WebkitMaskImage: 'linear-gradient(to left, black 0%, black 96%, transparent 100%), linear-gradient(to top, transparent 0%, black 10%, black 90%, transparent 100%)',
+          WebkitMaskComposite: 'source-in',
+        }}
+      >
+        <img
+          src="/images/after.png"
+          alt=""
+          className="h-full w-full object-cover object-left"
+          style={{
+            filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
+            opacity: 0.75,
+          }}
+        />
+      </motion.div>
+
       <motion.div
         variants={containerVariants}
         initial="hidden"

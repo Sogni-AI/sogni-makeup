@@ -95,6 +95,7 @@ export interface AppSettings {
   defaultSampler: string;
   defaultScheduler: string;
   outputFormat: string;
+  autoEnhanceWebcam: boolean;
 }
 
 export interface HistoryItem {

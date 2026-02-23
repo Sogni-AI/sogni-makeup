@@ -17,7 +17,11 @@ import {
   getTransformationHistory as getStoredHistory,
   saveTransformationHistory,
   clearTransformationHistory as clearStoredHistory,
+  getSettingFromStorage,
+  saveSettingToStorage,
+  removeSettingFromStorage,
 } from '@/utils/cookies';
+import { useAutoEnhance } from '@/hooks/useAutoEnhance';
 import { getURLs } from '@/config/urls';
 import { sogniAuth } from '@/services/sogniAuth';
 import { FrontendSogniClientAdapter } from '@/services/frontendSogniAdapter';
@@ -59,6 +63,7 @@ interface AppContextValue {
 
   // Settings
   settings: AppSettings;
+  updateSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => void;
 
   // SDK client (typed loosely so consumers do not need to import SDK types)
   sogniClient: unknown;
@@ -70,6 +75,12 @@ interface AppContextValue {
   resetPhoto: () => void;
   logout: () => Promise<void>;
   resetSettings: () => void;
+
+  // Auto-enhance
+  enhancePhoto: (imageBase64: string, client: unknown, isAuthenticated: boolean) => Promise<{ imageUrl: string } | null>;
+  enhanceProgress: import('@/types').GenerationProgress | null;
+  isEnhancing: boolean;
+  cancelEnhancement: () => void;
 
   // Demo mode
   demoGenerationsRemaining: number;
@@ -126,7 +137,13 @@ export function AppProvider({ children }: AppProviderProps) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   // -- Settings --
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<AppSettings>(() => ({
+    ...DEFAULT_SETTINGS,
+    autoEnhanceWebcam: getSettingFromStorage<boolean>('autoEnhanceWebcam', DEFAULT_SETTINGS.autoEnhanceWebcam),
+  }));
+
+  // -- Auto-enhance --
+  const { enhancePhoto, enhanceProgress, isEnhancing, cancelEnhancement } = useAutoEnhance();
 
   // -- SDK client --
   const [sogniClient, setSogniClient] = useState<unknown>(null);
@@ -336,6 +353,17 @@ export function AppProvider({ children }: AppProviderProps) {
    */
   const resetSettings = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
+    removeSettingFromStorage('autoEnhanceWebcam');
+  }, []);
+
+  /**
+   * Update a single setting and persist to localStorage if applicable.
+   */
+  const updateSetting = useCallback(<K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+    if (key === 'autoEnhanceWebcam') {
+      saveSettingToStorage('autoEnhanceWebcam', value);
+    }
   }, []);
 
   /**
@@ -885,6 +913,7 @@ export function AppProvider({ children }: AppProviderProps) {
         addToHistory,
         clearHistory,
         settings,
+        updateSetting,
         sogniClient,
         initializeSogniClient,
         generateMakeover,
@@ -892,6 +921,10 @@ export function AppProvider({ children }: AppProviderProps) {
         resetPhoto,
         logout,
         resetSettings,
+        enhancePhoto,
+        enhanceProgress,
+        isEnhancing,
+        cancelEnhancement,
         demoGenerationsRemaining,
       }}
     >
