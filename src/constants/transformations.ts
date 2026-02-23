@@ -1398,7 +1398,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     name: 'Button Nose',
     category: 'facial',
     subcategory: 'nose',
-    prompt: 'Give the person a cute button nose while keeping everything else the same',
+    prompt: 'Give the person a small, round, slightly upturned nose with a soft rounded tip while keeping everything else the same',
     icon: '🔘',
     intensity: 0.55,
   },

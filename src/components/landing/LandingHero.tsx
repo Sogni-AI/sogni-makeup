@@ -66,6 +66,7 @@ function LandingHero() {
   });
   const lastGenderRef = useRef<'female' | 'male'>('female');
   const shuffleBagRef = useRef<Record<string, number[]>>({ female: [], male: [] });
+  const hoverIndexRef = useRef<Record<string, number>>({ female: 0, male: 0 });
 
   const transitionTo = useCallback((pair: ImagePair) => {
     setPortraitDisplay(prev => {
@@ -102,20 +103,20 @@ function LandingHero() {
     let lastShownIdx = 0;
 
     if (hoveredGender) {
-      // Immediately show the hovered gender's main pair
-      // Reset bag so hover always starts fresh from the full set
-      shuffleBagRef.current[hoveredGender] = [];
+      // Show the next sequential image for this gender
       const pairs = hoveredGender === 'female' ? femalePairs : malePairs;
-      transitionTo(pairs[0]);
+      const idx = hoverIndexRef.current[hoveredGender] % pairs.length;
+      transitionTo(pairs[idx]);
+      hoverIndexRef.current[hoveredGender] = idx + 1;
       lastGenderRef.current = hoveredGender;
-      lastShownIdx = 0;
+      lastShownIdx = idx;
 
-      // Rotate through same-gender pairs
+      // Rotate through same-gender pairs sequentially
       const interval = setInterval(() => {
-        const pair = pickNextPair(hoveredGender, lastShownIdx);
-        const pairs = hoveredGender === 'female' ? femalePairs : malePairs;
-        lastShownIdx = pairs.indexOf(pair);
-        transitionTo(pair);
+        const nextIdx = hoverIndexRef.current[hoveredGender] % pairs.length;
+        transitionTo(pairs[nextIdx]);
+        lastShownIdx = nextIdx;
+        hoverIndexRef.current[hoveredGender] = nextIdx + 1;
       }, 5000);
       return () => clearInterval(interval);
     }
@@ -168,9 +169,9 @@ function LandingHero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
         className="pointer-events-none absolute left-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-left-[calc(5%-5px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
-          maskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
+          maskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           maskComposite: 'intersect',
-          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           WebkitMaskComposite: 'source-in',
         }}
       >
@@ -179,11 +180,12 @@ function LandingHero() {
             key={i}
             src={layer.before}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover object-right transition-[opacity,transform] duration-700 ease-in-out"
+            className="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-in-out"
             style={{
+              objectPosition: 'right top',
               filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
               opacity: portraitDisplay.activeLayer === i ? 0.7 : 0,
-              transform: portraitDisplay.activeLayer === i ? 'scale(0.95)' : 'translateX(-20px) scale(0.95)',
+              transform: portraitDisplay.activeLayer === i ? 'scale(1)' : 'translateX(-20px) scale(1)',
             }}
           />
         ))}
@@ -195,9 +197,9 @@ function LandingHero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
         className="pointer-events-none absolute right-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-right-[calc(5%-5px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
-          maskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
+          maskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           maskComposite: 'intersect',
-          WebkitMaskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           WebkitMaskComposite: 'source-in',
         }}
       >
@@ -206,11 +208,12 @@ function LandingHero() {
             key={i}
             src={layer.after}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover object-left transition-[opacity,transform] duration-700 ease-in-out"
+            className="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-in-out"
             style={{
+              objectPosition: 'left top',
               filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
               opacity: portraitDisplay.activeLayer === i ? 0.75 : 0,
-              transform: portraitDisplay.activeLayer === i ? 'scale(0.95)' : 'translateX(20px) scale(0.95)',
+              transform: portraitDisplay.activeLayer === i ? 'scale(1)' : 'translateX(20px) scale(1)',
             }}
           />
         ))}
