@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
+import type { Gender } from '@/types';
 import Button from '@/components/common/Button';
 import { VenusIcon, MarsIcon } from './GenderIcons';
 
@@ -35,9 +36,9 @@ const sampleCategories = [
 function LandingHero() {
   const { setCurrentView, setSelectedGender } = useApp();
   const [showGenderSelect, setShowGenderSelect] = useState(false);
-  const [hoveredGender, setHoveredGender] = useState<'female' | 'male' | null>(null);
+  const [hoveredGender, setHoveredGender] = useState<Gender | null>(null);
 
-  const handleSelectGender = (gender: 'female' | 'male') => {
+  const handleSelectGender = (gender: Gender) => {
     setSelectedGender(gender);
     setCurrentView('capture');
   };
@@ -190,6 +191,7 @@ function LandingHero() {
                 >
                   {/* Female icon */}
                   <motion.button
+                    aria-label="Female"
                     initial={{ x: 30, opacity: 0 }}
                     animate={{ x: 0, opacity: 1, transition: { delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
                     whileHover={{ scale: 1.08 }}
@@ -207,6 +209,7 @@ function LandingHero() {
 
                   {/* Male icon */}
                   <motion.button
+                    aria-label="Male"
                     initial={{ x: -30, opacity: 0 }}
                     animate={{ x: 0, opacity: 1, transition: { delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
                     whileHover={{ scale: 1.08 }}
