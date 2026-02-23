@@ -47,7 +47,7 @@ function Header() {
               </motion.button>
             )}
 
-            {authState.isAuthenticated && authState.user ? (
+            {authState.isAuthenticated ? (
               <UserMenu />
             ) : (
               <div className="flex items-center gap-2">

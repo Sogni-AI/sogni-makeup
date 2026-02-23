@@ -254,7 +254,7 @@ class SogniAuthManager implements SogniAuthService {
         isAuthenticated: true,
         authMode: 'frontend',
         user: {
-          username: currentAccount?.username,
+          username: currentAccount?.username || username,
           email: currentAccount?.email,
         },
         isLoading: false,
