@@ -1,0 +1,42 @@
+/* Minimal global styles - Tailwind handles most styling */
+
+/* Prevent page-level scrollbars - all scrolling happens inside #root */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#root {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Image rendering optimization */
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Video mirror effect for camera */
+.camera-mirror {
+  transform: scaleX(-1);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid theme('colors.rose.500');
+  outline-offset: 2px;
+}
+
+/* Disable tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

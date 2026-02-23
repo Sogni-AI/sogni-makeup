@@ -1,0 +1,285 @@
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { useApp } from '@/context/AppContext';
+import { useToast } from '@/context/ToastContext';
+import Button from '@/components/common/Button';
+
+type CameraState = 'requesting' | 'active' | 'captured' | 'denied' | 'error';
+
+function CameraView() {
+  const { setOriginalImage, setCurrentView } = useApp();
+  const { addToast } = useToast();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const startingRef = useRef(false);
+
+  const [cameraState, setCameraState] = useState<CameraState>('requesting');
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
+
+  const stopStream = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  }, []);
+
+  const startCamera = useCallback(async (facing: 'user' | 'environment') => {
+    // Guard: check for camera API availability
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraState('error');
+      addToast('error', 'Camera is not supported in this browser. Please try uploading a photo instead.');
+      return;
+    }
+
+    // Guard: prevent concurrent getUserMedia calls (Strict Mode double-mount)
+    if (startingRef.current) return;
+    startingRef.current = true;
+
+    try {
+      stopStream();
+
+      // Request highest useful resolution — square crop so request
+      // large square; iOS swaps width/height internally so we request
+      // landscape-oriented and let the browser negotiate.
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      const requestWidth = isIOS ? 1920 : 2048;
+      const requestHeight = isIOS ? 1080 : 2048;
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: facing,
+          width: { ideal: requestWidth },
+          height: { ideal: requestHeight },
+        },
+        audio: false,
+      });
+
+      streamRef.current = stream;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+
+      setCameraState('active');
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        setCameraState('denied');
+      } else {
+        setCameraState('error');
+        addToast('error', 'Unable to access camera. Please try uploading a photo instead.');
+      }
+    } finally {
+      startingRef.current = false;
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    startCamera(facingMode);
+
+    return () => {
+      stopStream();
+    };
+  }, [facingMode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const capturePhoto = useCallback(async () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    // Use the full native resolution for the square crop
+    const size = Math.min(video.videoWidth, video.videoHeight);
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Enable high-quality resampling
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // Fill black to prevent any transparency
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, size, size);
+
+    // Center-crop to square from the video's native resolution
+    const offsetX = (video.videoWidth - size) / 2;
+    const offsetY = (video.videoHeight - size) / 2;
+
+    if (facingMode === 'user') {
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.translate(-size, 0);
+    }
+
+    ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, size, size);
+
+    if (facingMode === 'user') {
+      ctx.restore();
+    }
+
+    // iOS stability: redraw after a short delay
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (isIOS) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, size, size);
+      if (facingMode === 'user') {
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.translate(-size, 0);
+      }
+      ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, size, size);
+      if (facingMode === 'user') {
+        ctx.restore();
+      }
+    }
+
+    // Two-step: lossless PNG first, then convert to JPEG for better quality
+    const pngDataUrl = canvas.toDataURL('image/png', 1.0);
+
+    // Convert PNG to high-quality JPEG
+    const img = new Image();
+    img.src = pngDataUrl;
+    await new Promise<void>((resolve) => {
+      img.onload = () => resolve();
+    });
+
+    canvas.width = size;
+    canvas.height = size;
+    const jpegCtx = canvas.getContext('2d');
+    if (jpegCtx) {
+      jpegCtx.drawImage(img, 0, 0);
+    }
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+    setCapturedImage(dataUrl);
+    setCameraState('captured');
+
+    stopStream();
+  }, [facingMode, stopStream]);
+
+  const retake = useCallback(() => {
+    setCapturedImage(null);
+    setCameraState('requesting');
+    startCamera(facingMode);
+  }, [facingMode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const usePhoto = useCallback(async () => {
+    if (!capturedImage) return;
+
+    const response = await fetch(capturedImage);
+    const blob = await response.blob();
+    const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+
+    setOriginalImage(file);
+    setCurrentView('studio');
+  }, [capturedImage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const flipCamera = useCallback(() => {
+    setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
+  }, []);
+
+  if (cameraState === 'denied') {
+    return (
+      <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+        <svg className="h-12 w-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+        <h3 className="mt-4 text-lg font-medium">Camera Access Denied</h3>
+        <p className="mt-2 text-sm text-white/40">
+          Please allow camera access in your browser settings, or try uploading a photo instead.
+        </p>
+      </div>
+    );
+  }
+
+  if (cameraState === 'error') {
+    return (
+      <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+        <svg className="h-12 w-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+        <h3 className="mt-4 text-lg font-medium">Camera Unavailable</h3>
+        <p className="mt-2 text-sm text-white/40">
+          Your device camera could not be accessed. Please try uploading a photo instead.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-black">
+        {cameraState === 'captured' && capturedImage ? (
+          <motion.img
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            src={capturedImage}
+            alt="Captured photo"
+            className="aspect-square w-full object-cover"
+          />
+        ) : (
+          <>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`aspect-square w-full object-cover ${facingMode === 'user' ? 'camera-mirror' : ''}`}
+            />
+            {cameraState === 'requesting' && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-rose-500/20 border-t-rose-500" />
+                  <p className="text-sm text-white/40">Starting camera...</p>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <canvas ref={canvasRef} className="hidden" />
+
+      <div className="mt-4 flex items-center gap-3 pb-2">
+        {cameraState === 'captured' ? (
+          <>
+            <Button variant="outline" onClick={retake}>
+              Retake
+            </Button>
+            <Button variant="primary" onClick={usePhoto}>
+              Use This Photo
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="outline" size="sm" onClick={flipCamera}>
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+              </svg>
+              Flip
+            </Button>
+            <button
+              onClick={capturePhoto}
+              disabled={cameraState !== 'active'}
+              className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/30 bg-white transition-all hover:scale-105 hover:border-white/50 active:scale-95 disabled:opacity-30"
+              aria-label="Capture photo"
+            >
+              <div className="h-12 w-12 rounded-full bg-white" />
+            </button>
+            <div className="w-[68px]" />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CameraView;

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="url(#bg-gradient)" />
+
+  <!-- Sparkle star - top right -->
+  <path d="M44 12 L45.5 17 L50 18.5 L45.5 20 L44 25 L42.5 20 L38 18.5 L42.5 17 Z" fill="#fbbf24" />
+
+  <!-- Sparkle star - small -->
+  <path d="M50 28 L51 30.5 L53.5 31.5 L51 32.5 L50 35 L49 32.5 L46.5 31.5 L49 30.5 Z" fill="#fcd34d" opacity="0.8" />
+
+  <!-- Mirror / palette shape -->
+  <ellipse cx="30" cy="34" rx="14" ry="16" fill="url(#mirror-gradient)" stroke="#ffffff" stroke-width="2" />
+
+  <!-- Inner mirror reflection -->
+  <ellipse cx="28" cy="30" rx="8" ry="10" fill="url(#reflection-gradient)" opacity="0.6" />
+
+  <!-- Handle -->
+  <rect x="26" y="49" width="8" height="8" rx="2" fill="#be123c" stroke="#ffffff" stroke-width="1.5" />
+
+  <!-- Sparkle star - left -->
+  <path d="M14 22 L15.2 25.5 L18.5 26.5 L15.2 27.5 L14 31 L12.8 27.5 L9.5 26.5 L12.8 25.5 Z" fill="#fbbf24" opacity="0.9" />
+
+  <defs>
+    <linearGradient id="bg-gradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fda4af" />
+      <stop offset="50%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+
+    <linearGradient id="mirror-gradient" x1="16" y1="18" x2="44" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fce7f3" />
+      <stop offset="100%" stop-color="#f9a8d4" />
+    </linearGradient>
+
+    <radialGradient id="reflection-gradient" cx="0.4" cy="0.35" r="0.6">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#fce7f3" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+</svg>

@@ -1,0 +1,101 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '@/context/AppContext';
+import BeforeAfterSlider from '@/components/common/BeforeAfterSlider';
+
+interface ResultDisplayProps {
+  resultUrl: string;
+}
+
+function ResultDisplay({ resultUrl }: ResultDisplayProps) {
+  const { originalImageUrl, setCurrentView } = useApp();
+  const [showComparison, setShowComparison] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(resultUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `sogni-makeover-${Date.now()}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(resultUrl, '_blank');
+    }
+  };
+
+  return (
+    <div className="relative h-full w-full">
+      <AnimatePresence mode="wait">
+        {showComparison && originalImageUrl ? (
+          <motion.div
+            key="comparison"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex h-full w-full items-center justify-center p-4"
+          >
+            <BeforeAfterSlider
+              beforeImage={originalImageUrl}
+              afterImage={resultUrl}
+              className="max-h-full"
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="result"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="h-full w-full"
+          >
+            <img
+              src={resultUrl}
+              alt="Transformation result"
+              className="h-full w-full object-contain"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating action bar */}
+      <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-white/10 bg-gray-900/80 px-2 py-1.5 shadow-xl backdrop-blur-md">
+        <button
+          onClick={() => setShowComparison(!showComparison)}
+          className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+          </svg>
+          {showComparison ? 'Result' : 'Compare'}
+        </button>
+        <div className="h-4 w-px bg-white/10" />
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Save
+        </button>
+        <div className="h-4 w-px bg-white/10" />
+        <button
+          onClick={() => setCurrentView('results')}
+          className="flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+          </svg>
+          Full View
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default ResultDisplay;
