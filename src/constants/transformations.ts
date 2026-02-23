@@ -52,7 +52,7 @@ export const SUBCATEGORIES: Record<TransformationCategory, TransformationSubcate
     { id: 'lips', name: 'Lips', icon: '💋', gender: 'female' },
     { id: 'eyes', name: 'Eyes', icon: '👁️', gender: 'female' },
     { id: 'face', name: 'Face', icon: '🧖', gender: 'female' },
-    { id: 'full-looks', name: 'Full Looks', icon: '💃' },
+    { id: 'full-looks', name: 'Full Looks', icon: '🪄' },
     { id: 'skin', name: 'Skin', icon: '✨', gender: 'male' },
     { id: 'brows', name: 'Brows', icon: '🫤', gender: 'male' },
   ],
@@ -505,7 +505,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to a modern quiff",
-    icon: '💫',
+    icon: '🔼',
     intensity: 0.70,
     gender: 'male',
   },
@@ -1293,6 +1293,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     prompt: "Replace the person's outfit with an elegant traditional Indian sari",
     icon: '🤎',
     intensity: 0.75,
+    gender: 'female',
   },
   {
     id: 'clothing-cultural-hanbok',
@@ -1497,6 +1498,33 @@ export const TRANSFORMATIONS: Transformation[] = [
     subcategory: 'eyes',
     prompt: "Change the person's eye color to vivid green",
     icon: '🟢',
+    intensity: 0.55,
+  },
+  {
+    id: 'facial-eyes-blue',
+    name: 'Blue Eyes',
+    category: 'facial',
+    subcategory: 'eyes',
+    prompt: "Change the person's eye color to bright blue",
+    icon: '🔵',
+    intensity: 0.55,
+  },
+  {
+    id: 'facial-eyes-brown',
+    name: 'Brown Eyes',
+    category: 'facial',
+    subcategory: 'eyes',
+    prompt: "Change the person's eye color to warm brown",
+    icon: '🟤',
+    intensity: 0.55,
+  },
+  {
+    id: 'facial-eyes-hazel',
+    name: 'Hazel Eyes',
+    category: 'facial',
+    subcategory: 'eyes',
+    prompt: "Change the person's eye color to hazel with golden-brown tones",
+    icon: '🟡',
     intensity: 0.55,
   },
 
@@ -1841,7 +1869,7 @@ export const TRANSFORMATIONS: Transformation[] = [
  */
 export function getSubcategoriesForGender(
   category: TransformationCategory,
-  gender: Gender | null,
+  gender?: Gender | null,
 ): TransformationSubcategory[] {
   const subs = SUBCATEGORIES[category] ?? [];
   if (!gender) return subs.filter((s) => !s.gender);
@@ -1856,7 +1884,7 @@ export function getTransformationsByCategory(
   gender?: Gender | null,
 ): Transformation[] {
   return TRANSFORMATIONS.filter(
-    (t) => t.category === category && (!gender || !t.gender || t.gender === gender),
+    (t) => t.category === category && (!t.gender || t.gender === gender),
   );
 }
 
@@ -1872,7 +1900,7 @@ export function getTransformationsBySubcategory(
     (t) =>
       t.category === category &&
       t.subcategory === subcategory &&
-      (!gender || !t.gender || t.gender === gender),
+      (!t.gender || t.gender === gender),
   );
 }
 
