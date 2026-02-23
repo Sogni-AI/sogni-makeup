@@ -7,15 +7,19 @@ import PhotoCapture from '@/components/capture/PhotoCapture';
 import MakeoverStudio from '@/components/studio/MakeoverStudio';
 import ComparisonView from '@/components/results/ComparisonView';
 import HistoryView from '@/components/history/HistoryView';
+import SessionTransferBanner from '@/components/auth/SessionTransferBanner';
 import Toast from '@/components/common/Toast';
 import './App.css';
 
 function AppContent() {
-  const { currentView } = useApp();
+  const { currentView, authState } = useApp();
 
   return (
     <div className="grain-overlay flex h-dvh flex-col overflow-hidden bg-surface-950 text-white">
       <Header />
+      {authState.sessionTransferred && authState.error && (
+        <SessionTransferBanner message={authState.error} />
+      )}
       <main className="min-h-0 flex-1 overflow-y-auto">
         {currentView === 'landing' && <LandingHero />}
         {currentView === 'capture' && <PhotoCapture />}
