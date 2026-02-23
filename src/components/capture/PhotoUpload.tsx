@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { useToast } from '@/context/ToastContext';
-import { validateImageFile } from '@/services/imageProcessing';
+import { validateImageFile, cropToPortrait } from '@/services/imageProcessing';
 import Button from '@/components/common/Button';
 
 function PhotoUpload() {
@@ -75,11 +75,12 @@ function PhotoUpload() {
     [handleFile]
   );
 
-  const handleUsePhoto = useCallback(() => {
+  const handleUsePhoto = useCallback(async () => {
     if (!selectedFile) return;
 
     try {
-      setOriginalImage(selectedFile);
+      const cropped = await cropToPortrait(selectedFile);
+      setOriginalImage(cropped);
       setCurrentView('studio');
     } catch {
       addToast('error', 'Failed to process image. Please try a different photo.');

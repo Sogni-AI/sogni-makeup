@@ -5,7 +5,7 @@ export const DEFAULT_MODEL = 'qwen_image_edit_2511_fp8_lightning';
 export const DEFAULT_SETTINGS: AppSettings = {
   defaultModel: DEFAULT_MODEL,
   defaultWidth: 1024,
-  defaultHeight: 1024,
+  defaultHeight: 1280,
   defaultGuidance: 1,
   defaultSteps: 4,
   defaultSampler: 'euler',
@@ -16,9 +16,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
 
 export const AUTO_ENHANCE_CONFIG = {
   prompt:
-    'Professional headshot photograph. Enhance lighting to soft studio lighting. Improve skin clarity and evenness. Sharpen facial details. Add subtle depth-of-field with softly blurred background. Maintain exact same facial features, identity, expression, and pose. Professional corporate portrait quality.',
+    'Professional headshot with soft studio lighting. Subtly smooth skin blemishes and even out skin tone while keeping natural skin texture. Sharpen facial details. Add subtle depth-of-field with softly blurred background. Preserve the exact same person: same ethnicity, same skin tone, same hair color, same hair style, same hair texture, same eye color, same facial structure, same bone structure, same nose shape, same lip shape, same face shape, same freckles, same moles, same birthmarks, same scars. Maintain exact same facial features, identity, expression, pose, and face proportions. Professional retouched portrait quality.',
   negativePrompt:
-    'deformed, distorted, bad quality, blurry, ugly, disfigured, changed face, different person, altered features, cartoon, painting, illustration',
+    'deformed, distorted, bad quality, blurry, ugly, disfigured, changed face, different person, altered features, different ethnicity, different skin color, lighter skin, darker skin, different hair color, different hair style, cartoon, painting, illustration, skin whitening, skin darkening, race change, stretched face, elongated face, warped proportions',
   denoisingStrength: 0.35,
 };
 
@@ -37,7 +37,8 @@ export const IMAGE_CONSTRAINTS = {
   maxDimension: 2048,
   minDimension: 256,
   acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'],
-  outputSize: 1024,
+  outputWidth: 1024,
+  outputHeight: 1280,
 };
 
 export const SSE_CONFIG = {

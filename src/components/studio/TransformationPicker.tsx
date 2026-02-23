@@ -64,7 +64,7 @@ function TransformationPicker({
       </div>
 
       {/* Transformation grid (scrollable) */}
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto md:overflow-y-hidden md:overflow-x-auto">
         {transformations.length > 0 ? (
           <motion.div
             key={`${category}-${selectedSubcategory}`}

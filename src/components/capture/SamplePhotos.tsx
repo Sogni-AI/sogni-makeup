@@ -18,24 +18,24 @@ function SamplePhotos() {
     (sampleId: string) => {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
-      canvas.height = 512;
+      canvas.height = 640;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       const sample = samplePlaceholders.find(s => s.id === sampleId);
       if (!sample) return;
 
-      const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+      const gradient = ctx.createLinearGradient(0, 0, 512, 640);
       gradient.addColorStop(0, sample.color1);
       gradient.addColorStop(1, sample.color2);
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 512, 512);
+      ctx.fillRect(0, 0, 512, 640);
 
       ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
       ctx.font = 'bold 24px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('Sample Photo', 256, 256);
+      ctx.fillText('Sample Photo', 256, 320);
 
       canvas.toBlob(
         (blob) => {
@@ -68,7 +68,7 @@ function SamplePhotos() {
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleSampleClick(sample.id)}
-            className="aspect-square rounded-xl border border-primary-400/[0.06] bg-surface-900/40 opacity-50 transition-all hover:border-primary-400/15 hover:opacity-80"
+            className="aspect-[4/5] rounded-xl border border-primary-400/[0.06] bg-surface-900/40 opacity-50 transition-all hover:border-primary-400/15 hover:opacity-80"
             style={{
               background: `linear-gradient(135deg, ${sample.color1}30, ${sample.color2}20)`,
             }}

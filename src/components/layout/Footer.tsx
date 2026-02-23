@@ -20,7 +20,7 @@ function Footer() {
 
           <nav className="flex items-center gap-6">
             <a
-              href="https://sogni.ai/about"
+              href="https://www.sogni.ai/supernet"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs tracking-wide text-white/25 transition-colors hover:text-white/50"
@@ -28,7 +28,7 @@ function Footer() {
               About
             </a>
             <a
-              href="https://sogni.ai/privacy"
+              href="https://www.sogni.ai/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs tracking-wide text-white/25 transition-colors hover:text-white/50"
@@ -36,7 +36,7 @@ function Footer() {
               Privacy
             </a>
             <a
-              href="https://sogni.ai/terms"
+              href="https://www.sogni.ai/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs tracking-wide text-white/25 transition-colors hover:text-white/50"

@@ -131,7 +131,7 @@ function HistoryView() {
               className="group cursor-pointer overflow-hidden rounded-xl border border-primary-400/[0.06] bg-surface-900/40 text-left transition-all hover:border-primary-400/15 hover:bg-surface-900/60"
             >
               {/* Thumbnail */}
-              <div className="aspect-square bg-surface-800">
+              <div className="aspect-[4/5] bg-surface-800">
                 {failedImages.has(item.id) ? (
                   <div className="flex h-full w-full items-center justify-center bg-surface-800">
                     <svg className="h-8 w-8 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

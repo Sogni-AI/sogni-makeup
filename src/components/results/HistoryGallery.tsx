@@ -38,7 +38,7 @@ function HistoryGallery() {
             onClick={() => handleItemClick(item)}
             className="group flex-shrink-0"
           >
-            <div className="h-20 w-20 overflow-hidden rounded-xl border border-white/10 transition-all group-hover:border-rose-500/30 sm:h-24 sm:w-24">
+            <div className="w-20 overflow-hidden rounded-xl border border-white/10 transition-all group-hover:border-rose-500/30 sm:w-24 aspect-[4/5]">
               <img
                 src={item.resultImage}
                 alt={item.transformation.name}

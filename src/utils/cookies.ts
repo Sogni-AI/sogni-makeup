@@ -100,6 +100,9 @@ export interface TransformationHistoryEntry {
   id: string;
   timestamp: number;
   prompt: string;
+  name?: string;
+  icon?: string;
+  subcategory?: string;
   sourceImageUrl: string;
   resultImageUrl: string;
   modelId: string;

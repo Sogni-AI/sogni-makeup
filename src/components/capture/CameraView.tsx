@@ -99,10 +99,24 @@ function CameraView() {
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
 
-    // Use the full native resolution for the square crop
-    const size = Math.min(video.videoWidth, video.videoHeight);
-    canvas.width = size;
-    canvas.height = size;
+    // Crop to 4:5 aspect ratio from the video's native resolution
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+
+    // Determine the largest 4:5 rectangle that fits inside the video
+    let cropW: number, cropH: number;
+    if (vw / vh > 4 / 5) {
+      // Video is wider than 4:5 — height is the constraint
+      cropH = vh;
+      cropW = Math.round(vh * (4 / 5));
+    } else {
+      // Video is taller than (or exactly) 4:5 — width is the constraint
+      cropW = vw;
+      cropH = Math.round(vw * (5 / 4));
+    }
+
+    canvas.width = cropW;
+    canvas.height = cropH;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -113,19 +127,19 @@ function CameraView() {
 
     // Fill black to prevent any transparency
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, size, size);
+    ctx.fillRect(0, 0, cropW, cropH);
 
-    // Center-crop to square from the video's native resolution
-    const offsetX = (video.videoWidth - size) / 2;
-    const offsetY = (video.videoHeight - size) / 2;
+    // Center-crop from the video's native resolution
+    const offsetX = (vw - cropW) / 2;
+    const offsetY = (vh - cropH) / 2;
 
     if (facingMode === 'user') {
       ctx.save();
       ctx.scale(-1, 1);
-      ctx.translate(-size, 0);
+      ctx.translate(-cropW, 0);
     }
 
-    ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, size, size);
+    ctx.drawImage(video, offsetX, offsetY, cropW, cropH, 0, 0, cropW, cropH);
 
     if (facingMode === 'user') {
       ctx.restore();
@@ -138,13 +152,13 @@ function CameraView() {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, size, size);
+      ctx.fillRect(0, 0, cropW, cropH);
       if (facingMode === 'user') {
         ctx.save();
         ctx.scale(-1, 1);
-        ctx.translate(-size, 0);
+        ctx.translate(-cropW, 0);
       }
-      ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, size, size);
+      ctx.drawImage(video, offsetX, offsetY, cropW, cropH, 0, 0, cropW, cropH);
       if (facingMode === 'user') {
         ctx.restore();
       }
@@ -160,8 +174,8 @@ function CameraView() {
       img.onload = () => resolve();
     });
 
-    canvas.width = size;
-    canvas.height = size;
+    canvas.width = cropW;
+    canvas.height = cropH;
     const jpegCtx = canvas.getContext('2d');
     if (jpegCtx) {
       jpegCtx.drawImage(img, 0, 0);
@@ -253,7 +267,7 @@ function CameraView() {
             animate={{ opacity: 1 }}
             src={capturedImage}
             alt="Captured photo"
-            className="aspect-square w-full object-cover"
+            className="aspect-[4/5] w-full object-cover"
           />
         ) : (
           <>
@@ -262,7 +276,7 @@ function CameraView() {
               autoPlay
               playsInline
               muted
-              className={`aspect-square w-full object-cover ${facingMode === 'user' ? 'camera-mirror' : ''}`}
+              className={`aspect-[4/5] w-full object-cover ${facingMode === 'user' ? 'camera-mirror' : ''}`}
             />
             {cameraState === 'requesting' && (
               <div className="absolute inset-0 flex items-center justify-center bg-surface-950">

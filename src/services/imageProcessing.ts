@@ -119,31 +119,43 @@ export function base64ToBlob(base64: string): Blob {
 }
 
 /**
- * Center-crop an image to a square.
- * The resulting square side length equals the shorter dimension of the original.
+ * Center-crop an image to a 4:5 aspect ratio (portrait).
+ * Fits the largest 4:5 rectangle inside the original image.
  */
-export async function cropToSquare(file: File): Promise<File> {
+export async function cropToPortrait(file: File): Promise<File> {
   const bitmap = await createImageBitmap(file);
   const { width, height } = bitmap;
 
-  // Already square
-  if (width === height) {
+  const TARGET_RATIO = 4 / 5;
+
+  // Already 4:5
+  if (Math.abs(width / height - TARGET_RATIO) < 0.001) {
     bitmap.close();
     return file;
   }
 
-  const side = Math.min(width, height);
-  const offsetX = Math.round((width - side) / 2);
-  const offsetY = Math.round((height - side) / 2);
+  let cropW: number, cropH: number;
+  if (width / height > TARGET_RATIO) {
+    // Image is wider than 4:5 — height is the constraint
+    cropH = height;
+    cropW = Math.round(height * TARGET_RATIO);
+  } else {
+    // Image is taller than 4:5 — width is the constraint
+    cropW = width;
+    cropH = Math.round(width / TARGET_RATIO);
+  }
 
-  const canvas = new OffscreenCanvas(side, side);
+  const offsetX = Math.round((width - cropW) / 2);
+  const offsetY = Math.round((height - cropH) / 2);
+
+  const canvas = new OffscreenCanvas(cropW, cropH);
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     bitmap.close();
-    throw new Error('Failed to get 2d context for square crop');
+    throw new Error('Failed to get 2d context for portrait crop');
   }
 
-  ctx.drawImage(bitmap, offsetX, offsetY, side, side, 0, 0, side, side);
+  ctx.drawImage(bitmap, offsetX, offsetY, cropW, cropH, 0, 0, cropW, cropH);
   bitmap.close();
 
   const outputType = ACCEPTED_IMAGE_TYPES.includes(file.type) ? file.type : 'image/png';
