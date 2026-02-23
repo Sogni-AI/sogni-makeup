@@ -3,6 +3,7 @@ import type {
   AppView,
   AppSettings,
   AuthState,
+  Gender,
   GenerationProgress,
   GenerationResult,
   HistoryItem,
@@ -35,6 +36,10 @@ interface AppContextValue {
   // Navigation
   currentView: AppView;
   setCurrentView: (view: AppView) => void;
+
+  // Gender
+  selectedGender: Gender | null;
+  setSelectedGender: (gender: Gender) => void;
 
   // Auth
   authState: AuthState;
@@ -110,6 +115,12 @@ interface AppProviderProps {
 export function AppProvider({ children }: AppProviderProps) {
   // -- Navigation --
   const [currentView, setCurrentView] = useState<AppView>('landing');
+
+  // -- Gender --
+  const [selectedGender, setSelectedGenderRaw] = useState<Gender | null>(null);
+  const setSelectedGender = useCallback((gender: Gender) => {
+    setSelectedGenderRaw(gender);
+  }, []);
 
   // -- Auth --
   const [authState, setAuthState] = useState<AuthState>({
@@ -900,6 +911,8 @@ export function AppProvider({ children }: AppProviderProps) {
       value={{
         currentView,
         setCurrentView,
+        selectedGender,
+        setSelectedGender,
         authState,
         setAuthState,
         originalImage,
