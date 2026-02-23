@@ -3,17 +3,13 @@ import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 
 const femaleSamples = [
-  { id: 'sample-f1', src: '/images/before.png', label: 'Female Portrait 1' },
-  { id: 'sample-f2', src: '/images/before3.png', label: 'Female Portrait 2' },
-  { id: 'sample-f3', src: '/images/before4.png', label: 'Female Portrait 3' },
-  { id: 'sample-f4', src: '/images/before5.png', label: 'Female Portrait 4' },
+  { id: 'sample-f1', src: '/images/woman1.jpg', label: 'Female Portrait 1' },
+  { id: 'sample-f2', src: '/images/woman2.jpg', label: 'Female Portrait 2' },
 ];
 
 const maleSamples = [
-  { id: 'sample-m1', src: '/images/before2.png', label: 'Male Portrait 1' },
-  { id: 'sample-m2', src: '/images/before6.png', label: 'Male Portrait 2' },
-  { id: 'sample-m3', src: '/images/before7.png', label: 'Male Portrait 3' },
-  { id: 'sample-m4', src: '/images/before8.png', label: 'Male Portrait 4' },
+  { id: 'sample-m1', src: '/images/man1.jpg', label: 'Male Portrait 1' },
+  { id: 'sample-m2', src: '/images/man2.jpg', label: 'Male Portrait 2' },
 ];
 
 function SamplePhotos() {
@@ -26,7 +22,7 @@ function SamplePhotos() {
       fetch(src)
         .then((res) => res.blob())
         .then((blob) => {
-          const file = new File([blob], `${id}.png`, { type: 'image/png' });
+          const file = new File([blob], `${id}.jpg`, { type: 'image/jpeg' });
           setOriginalImage(file);
           setCurrentView('studio');
         });
@@ -44,7 +40,7 @@ function SamplePhotos() {
       <p className="text-center text-[11px] font-medium uppercase tracking-[0.2em] text-white/20">
         Or try with a sample photo
       </p>
-      <div className="mt-4 grid grid-cols-4 gap-3">
+      <div className="mx-auto mt-4 grid max-w-[200px] grid-cols-2 gap-2">
         {samples.map((sample) => (
           <motion.button
             key={sample.id}

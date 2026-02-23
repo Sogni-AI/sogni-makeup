@@ -6,10 +6,43 @@ interface BeforeAfterSliderProps {
   className?: string;
 }
 
+/**
+ * Center-crop an image to match target dimensions (same behavior as CSS object-cover).
+ * Returns a blob URL of the resized image, or null if no resize needed.
+ */
+function resizeToMatch(
+  img: HTMLImageElement,
+  targetW: number,
+  targetH: number,
+): string | null {
+  const { naturalWidth: srcW, naturalHeight: srcH } = img;
+
+  // Already matching — skip resize
+  if (srcW === targetW && srcH === targetH) return null;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  // Replicate object-cover: scale to fill, then center-crop
+  const scale = Math.max(targetW / srcW, targetH / srcH);
+  const scaledW = srcW * scale;
+  const scaledH = srcH * scale;
+  const offsetX = (targetW - scaledW) / 2;
+  const offsetY = (targetH - scaledH) / 2;
+
+  ctx.drawImage(img, 0, 0, srcW, srcH, offsetX, offsetY, scaledW, scaledH);
+
+  return canvas.toDataURL('image/jpeg', 0.92);
+}
+
 function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [displaySize, setDisplaySize] = useState<{ width: number; height: number } | null>(null);
+  const [normalizedBefore, setNormalizedBefore] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const naturalSizeRef = useRef<{ width: number; height: number } | null>(null);
 
@@ -17,7 +50,8 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
   useEffect(() => {
     setDisplaySize(null);
     naturalSizeRef.current = null;
-  }, [afterImage]);
+    setNormalizedBefore(null);
+  }, [afterImage, beforeImage]);
 
   // Compute display size that fits within parent while maintaining aspect ratio
   const computeDisplaySize = useCallback(() => {
@@ -48,12 +82,25 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
     return () => observer.disconnect();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Capture natural image dimensions on load
+  // Capture natural image dimensions on load and normalize the before image
   const handleAfterImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
-    naturalSizeRef.current = { width: img.naturalWidth, height: img.naturalHeight };
+    const afterW = img.naturalWidth;
+    const afterH = img.naturalHeight;
+    naturalSizeRef.current = { width: afterW, height: afterH };
     computeDisplaySize();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Normalize the before image to match the after's exact dimensions
+    const beforeImg = new Image();
+    beforeImg.crossOrigin = 'anonymous';
+    beforeImg.onload = () => {
+      const dataUrl = resizeToMatch(beforeImg, afterW, afterH);
+      if (dataUrl) {
+        setNormalizedBefore(dataUrl);
+      }
+    };
+    beforeImg.src = beforeImage;
+  }, [beforeImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updatePosition = useCallback((clientX: number) => {
     const container = containerRef.current;
@@ -112,6 +159,9 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
     };
   }, [isDragging]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Use the normalized (dimension-matched) before image when available
+  const effectiveBefore = normalizedBefore || beforeImage;
+
   return (
     <div
       ref={containerRef}
@@ -144,7 +194,7 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
 
       {/* Before image (clipped overlay — same size as after) */}
       <img
-        src={beforeImage}
+        src={effectiveBefore}
         alt="Before transformation"
         className="absolute inset-0 block h-full w-full object-cover"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
