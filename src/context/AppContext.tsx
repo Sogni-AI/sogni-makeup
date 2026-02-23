@@ -67,6 +67,8 @@ interface AppContextValue {
   generateMakeover: (transformation: Transformation) => Promise<void>;
   cancelGeneration: () => void;
   resetPhoto: () => void;
+  logout: () => Promise<void>;
+  resetSettings: () => void;
 
   // Demo mode
   demoGenerationsRemaining: number;
@@ -123,7 +125,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   // -- Settings --
-  const [settings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 
   // -- SDK client --
   const [sogniClient, setSogniClient] = useState<unknown>(null);
@@ -148,6 +150,7 @@ export function AppProvider({ children }: AppProviderProps) {
         user,
         authMode: state.authMode ?? 'demo',
         error: state.error,
+        sessionTransferred: state.sessionTransferred,
       });
       if (state.isAuthenticated) {
         const rawClient = sogniAuth.getSogniClient();
@@ -307,6 +310,31 @@ export function AppProvider({ children }: AppProviderProps) {
       if (!prev) return null;
       return { ...prev, status: 'cancelled', message: 'Generation cancelled' };
     });
+  }, []);
+
+  /**
+   * Log out the current user, cancel any in-progress generation, and return to landing.
+   */
+  const logout = useCallback(async () => {
+    // Cancel any in-progress generation
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setGenerationProgress(null);
+    setCurrentResult(null);
+    setCurrentTransformation(null);
+
+    await sogniAuth.logout();
+
+    setCurrentView('landing');
+  }, []);
+
+  /**
+   * Reset settings to defaults.
+   */
+  const resetSettings = useCallback(() => {
+    setSettings(DEFAULT_SETTINGS);
   }, []);
 
   /**
@@ -860,6 +888,8 @@ export function AppProvider({ children }: AppProviderProps) {
         generateMakeover,
         cancelGeneration,
         resetPhoto,
+        logout,
+        resetSettings,
         demoGenerationsRemaining,
       }}
     >

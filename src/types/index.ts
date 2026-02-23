@@ -79,10 +79,11 @@ export interface AuthState {
   user: SogniUser | null;
   authMode: AuthMode;
   error: string | null;
+  sessionTransferred?: boolean;
 }
 
 // App State
-export type AppView = 'landing' | 'capture' | 'studio' | 'results';
+export type AppView = 'landing' | 'capture' | 'studio' | 'results' | 'history';
 
 export interface AppSettings {
   defaultModel: string;
