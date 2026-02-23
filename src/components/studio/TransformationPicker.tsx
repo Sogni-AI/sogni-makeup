@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import type { TransformationCategory, Transformation } from '@/types';
-import { CATEGORIES, SUBCATEGORIES, getTransformationsBySubcategory } from '@/constants/transformations';
+import type { TransformationCategory, Transformation, Gender } from '@/types';
+import { CATEGORIES, getSubcategoriesForGender, getTransformationsBySubcategory } from '@/constants/transformations';
 
 interface TransformationPickerProps {
   category: TransformationCategory;
@@ -10,6 +10,7 @@ interface TransformationPickerProps {
   onSelectTransformation: (transformation: Transformation) => void;
   isDisabled: boolean;
   activeTransformationId: string | null;
+  gender: Gender | null;
 }
 
 const gridContainerVariants = {
@@ -31,11 +32,15 @@ function TransformationPicker({
   onSelectTransformation,
   isDisabled,
   activeTransformationId,
+  gender,
 }: TransformationPickerProps) {
-  const subcategories = useMemo(() => SUBCATEGORIES[category] ?? [], [category]);
+  const subcategories = useMemo(
+    () => getSubcategoriesForGender(category, gender),
+    [category, gender],
+  );
   const transformations = useMemo(
-    () => getTransformationsBySubcategory(category, selectedSubcategory),
-    [category, selectedSubcategory]
+    () => getTransformationsBySubcategory(category, selectedSubcategory, gender),
+    [category, selectedSubcategory, gender],
   );
 
   if (!CATEGORIES[category]) return null;

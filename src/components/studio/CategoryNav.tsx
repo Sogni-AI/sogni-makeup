@@ -1,17 +1,20 @@
 import { motion } from 'framer-motion';
 import { CATEGORIES } from '@/constants/transformations';
-import type { TransformationCategory } from '@/types';
+import type { TransformationCategory, Gender } from '@/types';
 
 interface CategoryNavProps {
   selectedCategory: TransformationCategory;
   onSelectCategory: (category: TransformationCategory) => void;
+  gender: Gender | null;
 }
 
-function CategoryNav({ selectedCategory, onSelectCategory }: CategoryNavProps) {
+function CategoryNav({ selectedCategory, onSelectCategory, gender }: CategoryNavProps) {
   return (
     <nav className="studio-sidebar" aria-label="Transformation categories">
-      {(Object.entries(CATEGORIES) as [TransformationCategory, { name: string; icon: string; description: string }][]).map(([key, category]) => {
+      {(Object.entries(CATEGORIES) as [TransformationCategory, typeof CATEGORIES[TransformationCategory]][]).map(([key, category]) => {
         const isActive = selectedCategory === key;
+        const displayName = (gender === 'male' && category.maleName) ? category.maleName : category.name;
+        const displayIcon = (gender === 'male' && category.maleIcon) ? category.maleIcon : category.icon;
         return (
           <motion.button
             key={key}
@@ -23,7 +26,7 @@ function CategoryNav({ selectedCategory, onSelectCategory }: CategoryNavProps) {
                 ? 'bg-primary-400/8 text-primary-300'
                 : 'text-white/35 hover:bg-primary-400/[0.04] hover:text-white/50'
             }`}
-            aria-label={category.name}
+            aria-label={displayName}
             aria-current={isActive ? 'true' : undefined}
           >
             {isActive && (
@@ -33,9 +36,9 @@ function CategoryNav({ selectedCategory, onSelectCategory }: CategoryNavProps) {
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               />
             )}
-            <span className="relative text-lg md:text-xl">{category.icon}</span>
+            <span className="relative text-lg md:text-xl">{displayIcon}</span>
             <span className="relative text-center text-[10px] font-medium leading-tight md:text-xs">
-              {category.name}
+              {displayName}
             </span>
           </motion.button>
         );

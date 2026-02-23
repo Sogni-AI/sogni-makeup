@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import type { TransformationCategory, Transformation } from '@/types';
-import { CATEGORIES, SUBCATEGORIES } from '@/constants/transformations';
+import { CATEGORIES, getSubcategoriesForGender } from '@/constants/transformations';
 import CategoryNav from '@/components/studio/CategoryNav';
 import TransformationPicker from '@/components/studio/TransformationPicker';
 import OriginalPhoto from '@/components/studio/OriginalPhoto';
@@ -31,20 +31,22 @@ function MakeoverStudio() {
     enhanceProgress,
     isEnhancing,
     cancelEnhancement,
+    selectedGender,
   } = useApp();
 
   const [selectedCategory, setSelectedCategory] = useState<TransformationCategory>(categoryKeys[0]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string>(
-    SUBCATEGORIES[categoryKeys[0]][0].id
-  );
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>(() => {
+    const subs = getSubcategoriesForGender(categoryKeys[0], selectedGender);
+    return subs[0]?.id ?? '';
+  });
 
   const handleCategoryChange = useCallback((category: TransformationCategory) => {
     setSelectedCategory(category);
-    const subcategories = SUBCATEGORIES[category];
-    if (subcategories && subcategories.length > 0) {
+    const subcategories = getSubcategoriesForGender(category, selectedGender);
+    if (subcategories.length > 0) {
       setSelectedSubcategory(subcategories[0].id);
     }
-  }, []);
+  }, [selectedGender]);
 
   const handleSelectTransformation = useCallback(
     (transformation: Transformation) => {
@@ -86,6 +88,7 @@ function MakeoverStudio() {
         <CategoryNav
           selectedCategory={selectedCategory}
           onSelectCategory={handleCategoryChange}
+          gender={selectedGender}
         />
 
         {/* Main content */}
@@ -165,6 +168,7 @@ function MakeoverStudio() {
               onSelectTransformation={handleSelectTransformation}
               isDisabled={isGenerating || isEnhancing}
               activeTransformationId={currentTransformation?.id ?? null}
+              gender={selectedGender}
             />
           </div>
         </div>

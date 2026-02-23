@@ -1,75 +1,86 @@
-import type { Transformation, TransformationCategory, TransformationSubcategory } from '@/types';
+import type { Transformation, TransformationCategory, TransformationSubcategory, Gender } from '@/types';
 
-export const CATEGORIES: Record<TransformationCategory, { name: string; icon: string; description: string }> = {
+export const CATEGORIES: Record<TransformationCategory, {
+  name: string;
+  maleName?: string;
+  icon: string;
+  maleIcon?: string;
+  description: string;
+}> = {
   hairstyles: {
     name: 'Hairstyles',
-    icon: '\u2702\uFE0F',
+    icon: '✂️',
     description: 'Change hair color, style, and length',
   },
   makeup: {
     name: 'Makeup',
-    icon: '\uD83D\uDC84',
+    maleName: 'Grooming',
+    icon: '💄',
+    maleIcon: '🪒',
     description: 'Apply lipstick, eye makeup, and full looks',
   },
   clothing: {
     name: 'Clothing & Style',
-    icon: '\uD83D\uDC54',
+    icon: '👔',
     description: 'Try on formal, casual, cultural, and decade-inspired outfits',
   },
   facial: {
     name: 'Facial Features',
-    icon: '\u2728',
+    icon: '✨',
     description: 'Refine nose, jawline, eyes, lips, and cheekbones',
   },
   body: {
     name: 'Body & Shape',
-    icon: '\uD83D\uDCAA',
+    icon: '💪',
     description: 'Transform body shape and proportions',
   },
   'age-fantasy': {
     name: 'Age & Fantasy',
-    icon: '\uD83C\uDFAD',
+    icon: '🎭',
     description: 'Age transformations and fantasy character styles',
   },
 };
 
 export const SUBCATEGORIES: Record<TransformationCategory, TransformationSubcategory[]> = {
   hairstyles: [
-    { id: 'color', name: 'Color', icon: '\uD83C\uDFA8' },
-    { id: 'style', name: 'Style', icon: '\uD83D\uDC87' },
-    { id: 'length', name: 'Length', icon: '\uD83D\uDCCF' },
+    { id: 'color', name: 'Color', icon: '🎨' },
+    { id: 'style', name: 'Style', icon: '💇' },
+    { id: 'length', name: 'Length', icon: '📏' },
+    { id: 'facial-hair', name: 'Facial Hair', icon: '🧔', gender: 'male' },
   ],
   makeup: [
-    { id: 'lips', name: 'Lips', icon: '\uD83D\uDC8B' },
-    { id: 'eyes', name: 'Eyes', icon: '\uD83D\uDC41\uFE0F' },
-    { id: 'face', name: 'Face', icon: '\uD83E\uDDD6' },
-    { id: 'full-looks', name: 'Full Looks', icon: '\uD83D\uDC83' },
+    { id: 'lips', name: 'Lips', icon: '💋', gender: 'female' },
+    { id: 'eyes', name: 'Eyes', icon: '👁️', gender: 'female' },
+    { id: 'face', name: 'Face', icon: '🧖', gender: 'female' },
+    { id: 'full-looks', name: 'Full Looks', icon: '💃' },
+    { id: 'skin', name: 'Skin', icon: '✨', gender: 'male' },
+    { id: 'brows', name: 'Brows', icon: '🫤', gender: 'male' },
   ],
   clothing: [
-    { id: 'formal', name: 'Formal', icon: '\uD83E\uDD35' },
-    { id: 'casual', name: 'Casual', icon: '\uD83D\uDC55' },
-    { id: 'cultural', name: 'Cultural', icon: '\uD83C\uDF0D' },
-    { id: 'decades', name: 'Decades', icon: '\u23F3' },
+    { id: 'formal', name: 'Formal', icon: '🤵' },
+    { id: 'casual', name: 'Casual', icon: '👕' },
+    { id: 'cultural', name: 'Cultural', icon: '🌍' },
+    { id: 'decades', name: 'Decades', icon: '⏳' },
   ],
   facial: [
-    { id: 'nose', name: 'Nose', icon: '\uD83D\uDC43' },
-    { id: 'jawline', name: 'Jawline', icon: '\uD83D\uDDE3\uFE0F' },
-    { id: 'eyes', name: 'Eyes', icon: '\uD83D\uDC40' },
-    { id: 'lips', name: 'Lips', icon: '\uD83D\uDC44' },
-    { id: 'cheekbones', name: 'Cheekbones', icon: '\uD83D\uDE18' },
+    { id: 'nose', name: 'Nose', icon: '👃' },
+    { id: 'jawline', name: 'Jawline', icon: '🗣️' },
+    { id: 'eyes', name: 'Eyes', icon: '👀' },
+    { id: 'lips', name: 'Lips', icon: '👄' },
+    { id: 'cheekbones', name: 'Cheekbones', icon: '😘' },
   ],
   body: [
-    { id: 'body', name: 'Body', icon: '\uD83E\uDDD1' },
+    { id: 'body', name: 'Body', icon: '🧑' },
   ],
   'age-fantasy': [
-    { id: 'age', name: 'Age', icon: '\u231B' },
-    { id: 'fantasy', name: 'Fantasy', icon: '\uD83E\uDDD9' },
+    { id: 'age', name: 'Age', icon: '⌛' },
+    { id: 'fantasy', name: 'Fantasy', icon: '🧙' },
   ],
 };
 
 export const TRANSFORMATIONS: Transformation[] = [
   // ============================================================
-  // HAIRSTYLES - Color (14 items)
+  // HAIRSTYLES - Color (14 items) — all neutral
   // ============================================================
   {
     id: 'hair-color-blonde',
@@ -77,7 +88,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to golden blonde while keeping everything else the same",
-    icon: '\uD83D\uDC71',
+    icon: '👱',
     intensity: 0.65,
   },
   {
@@ -86,7 +97,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to rich brunette brown while keeping everything else the same",
-    icon: '\uD83D\uDC69',
+    icon: '👩',
     intensity: 0.65,
   },
   {
@@ -95,7 +106,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to red auburn while keeping everything else the same",
-    icon: '\uD83E\uDDB0',
+    icon: '🦰',
     intensity: 0.65,
   },
   {
@@ -104,7 +115,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to jet black while keeping everything else the same",
-    icon: '\uD83D\uDDA4',
+    icon: '🖤',
     intensity: 0.65,
   },
   {
@@ -113,7 +124,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to platinum white blonde while keeping everything else the same",
-    icon: '\u2B50',
+    icon: '⭐',
     intensity: 0.65,
   },
   {
@@ -122,7 +133,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to silver gray while keeping everything else the same",
-    icon: '\uD83E\uDD0D',
+    icon: '🤍',
     intensity: 0.65,
   },
   {
@@ -131,7 +142,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to bright pink while keeping everything else the same",
-    icon: '\uD83C\uDF38',
+    icon: '🌸',
     intensity: 0.65,
   },
   {
@@ -140,7 +151,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to vibrant blue while keeping everything else the same",
-    icon: '\uD83D\uDC99',
+    icon: '💙',
     intensity: 0.65,
   },
   {
@@ -149,7 +160,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to deep purple while keeping everything else the same",
-    icon: '\uD83D\uDC9C',
+    icon: '💜',
     intensity: 0.65,
   },
   {
@@ -158,7 +169,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair color to emerald green while keeping everything else the same",
-    icon: '\uD83D\uDC9A',
+    icon: '💚',
     intensity: 0.65,
   },
   {
@@ -167,7 +178,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair to an ombre style, dark roots transitioning to light blonde tips",
-    icon: '\uD83C\uDF05',
+    icon: '🌅',
     intensity: 0.65,
   },
   {
@@ -176,7 +187,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Add sun-kissed blonde highlights throughout the person's hair",
-    icon: '\u2600\uFE0F',
+    icon: '☀️',
     intensity: 0.65,
   },
   {
@@ -185,7 +196,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: 'Give the person a beautiful balayage hair coloring with natural-looking hand-painted highlights',
-    icon: '\uD83C\uDF1F',
+    icon: '🌟',
     intensity: 0.65,
   },
   {
@@ -194,38 +205,20 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'color',
     prompt: "Change the person's hair to rainbow colors with streaks of red, orange, yellow, green, blue, and purple",
-    icon: '\uD83C\uDF08',
+    icon: '🌈',
     intensity: 0.65,
   },
 
   // ============================================================
-  // HAIRSTYLES - Style (18 items)
+  // HAIRSTYLES - Style — neutral
   // ============================================================
-  {
-    id: 'hair-style-bob',
-    name: 'Bob',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Change the person's hairstyle to a classic chin-length bob cut",
-    icon: '\uD83D\uDC87',
-    intensity: 0.70,
-  },
-  {
-    id: 'hair-style-pixie',
-    name: 'Pixie Cut',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Change the person's hairstyle to a short pixie cut",
-    icon: '\uD83E\uDDD5',
-    intensity: 0.70,
-  },
   {
     id: 'hair-style-long-waves',
     name: 'Long Waves',
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to long flowing wavy hair",
-    icon: '\uD83C\uDF0A',
+    icon: '🌊',
     intensity: 0.70,
   },
   {
@@ -234,7 +227,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to beautiful natural curly hair",
-    icon: '\u27B0',
+    icon: '➰',
     intensity: 0.70,
   },
   {
@@ -243,7 +236,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to sleek straight hair",
-    icon: '\u2712\uFE0F',
+    icon: '✒️',
     intensity: 0.70,
   },
   {
@@ -252,25 +245,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to elegant braided hair",
-    icon: '\uD83E\uDDF6',
-    intensity: 0.70,
-  },
-  {
-    id: 'hair-style-ponytail',
-    name: 'Ponytail',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Change the person's hairstyle to a high ponytail",
-    icon: '\uD83C\uDF80',
-    intensity: 0.70,
-  },
-  {
-    id: 'hair-style-messy-bun',
-    name: 'Messy Bun',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Change the person's hairstyle to a casual messy bun",
-    icon: '\uD83E\uDDF7',
+    icon: '🧶',
     intensity: 0.70,
   },
   {
@@ -279,25 +254,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to a bold mohawk",
-    icon: '\uD83E\uDD18',
-    intensity: 0.70,
-  },
-  {
-    id: 'hair-style-buzz-cut',
-    name: 'Buzz Cut',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Change the person's hairstyle to a very short buzz cut",
-    icon: '\uD83D\uDC68\u200D\uD83E\uDDB2',
-    intensity: 0.70,
-  },
-  {
-    id: 'hair-style-undercut',
-    name: 'Undercut',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Change the person's hairstyle to a trendy undercut with longer hair on top",
-    icon: '\u2702\uFE0F',
+    icon: '🤘',
     intensity: 0.70,
   },
   {
@@ -306,7 +263,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to a full natural afro",
-    icon: '\uD83E\uDDB1',
+    icon: '🦱',
     intensity: 0.70,
   },
   {
@@ -315,7 +272,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to dreadlocks",
-    icon: '\uD83E\uDDF5',
+    icon: '🧵',
     intensity: 0.70,
   },
   {
@@ -324,16 +281,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to box braids",
-    icon: '\uD83D\uDCAB',
-    intensity: 0.70,
-  },
-  {
-    id: 'hair-style-bangs',
-    name: 'Bangs',
-    category: 'hairstyles',
-    subcategory: 'style',
-    prompt: "Add blunt bangs to the person's hairstyle while keeping the rest the same",
-    icon: '\uD83D\uDE0E',
+    icon: '💫',
     intensity: 0.70,
   },
   {
@@ -342,7 +290,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to a modern mullet",
-    icon: '\uD83C\uDFB8',
+    icon: '🎸',
     intensity: 0.70,
   },
   {
@@ -351,7 +299,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to a layered shag cut",
-    icon: '\uD83C\uDF3F',
+    icon: '🌿',
     intensity: 0.70,
   },
   {
@@ -360,12 +308,354 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'style',
     prompt: "Change the person's hairstyle to a trendy wolf cut with choppy layers",
-    icon: '\uD83D\uDC3A',
+    icon: '🐺',
     intensity: 0.70,
   },
 
   // ============================================================
-  // HAIRSTYLES - Length (5 items)
+  // HAIRSTYLES - Style — female
+  // ============================================================
+  {
+    id: 'hair-style-bob',
+    name: 'Bob',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a classic chin-length bob cut",
+    icon: '💇',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-pixie',
+    name: 'Pixie Cut',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a short pixie cut",
+    icon: '🧕',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-ponytail',
+    name: 'Ponytail',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a high ponytail",
+    icon: '🎀',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-messy-bun',
+    name: 'Messy Bun',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a casual messy bun",
+    icon: '🧷',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-bangs',
+    name: 'Bangs',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Add blunt bangs to the person's hairstyle while keeping the rest the same",
+    icon: '😎',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-french-twist',
+    name: 'French Twist',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to an elegant French twist updo",
+    icon: '🌀',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-side-swept',
+    name: 'Side Swept',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a glamorous side-swept style",
+    icon: '💨',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-half-up',
+    name: 'Half Up Half Down',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a half up half down style",
+    icon: '⬆️',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-space-buns',
+    name: 'Space Buns',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to playful space buns",
+    icon: '🪐',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-curtain-bangs',
+    name: 'Curtain Bangs',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Add curtain bangs to the person's hairstyle framing the face",
+    icon: '🪟',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'hair-style-layered',
+    name: 'Layered',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a layered cut with face-framing layers",
+    icon: '🍃',
+    intensity: 0.70,
+    gender: 'female',
+  },
+
+  // ============================================================
+  // HAIRSTYLES - Style — male
+  // ============================================================
+  {
+    id: 'hair-style-buzz-cut',
+    name: 'Buzz Cut',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a very short buzz cut",
+    icon: '👨‍🦲',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-undercut',
+    name: 'Undercut',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a trendy undercut with longer hair on top",
+    icon: '✂️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-fade',
+    name: 'Fade',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a clean fade haircut",
+    icon: '💈',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-crew-cut',
+    name: 'Crew Cut',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a classic crew cut",
+    icon: '🪖',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-slick-back',
+    name: 'Slick Back',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a slicked back style",
+    icon: '🕴️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-man-bun',
+    name: 'Man Bun',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a man bun",
+    icon: '🔝',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-pompadour',
+    name: 'Pompadour',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a classic pompadour",
+    icon: '🎵',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-quiff',
+    name: 'Quiff',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a modern quiff",
+    icon: '💫',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-comb-over',
+    name: 'Comb Over',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a side-parted comb over",
+    icon: '➡️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-style-flat-top',
+    name: 'Flat Top',
+    category: 'hairstyles',
+    subcategory: 'style',
+    prompt: "Change the person's hairstyle to a flat top",
+    icon: '⬛',
+    intensity: 0.70,
+    gender: 'male',
+  },
+
+  // ============================================================
+  // HAIRSTYLES - Facial Hair (male only)
+  // ============================================================
+  {
+    id: 'hair-facial-full-beard',
+    name: 'Full Beard',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a full thick beard',
+    icon: '🧔',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-stubble',
+    name: 'Stubble',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person light stubble facial hair',
+    icon: '🌫️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-goatee',
+    name: 'Goatee',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a goatee beard on the chin',
+    icon: '🎯',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-mustache',
+    name: 'Mustache',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a classic mustache',
+    icon: '🥸',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-handlebar',
+    name: 'Handlebar Mustache',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a handlebar mustache with curled ends',
+    icon: '〰️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-van-dyke',
+    name: 'Van Dyke',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a Van Dyke beard with mustache and pointed chin beard',
+    icon: '🎭',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-mutton-chops',
+    name: 'Mutton Chops',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person mutton chop sideburns',
+    icon: '🐑',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-soul-patch',
+    name: 'Soul Patch',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a small soul patch below the lower lip',
+    icon: '▪️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-clean-shaven',
+    name: 'Clean Shaven',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Make the person completely clean shaven with no facial hair',
+    icon: '✨',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-five-oclock',
+    name: "5 O'Clock Shadow",
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: "Give the person a 5 o'clock shadow with slight stubble",
+    icon: '🕐',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-lumberjack',
+    name: 'Lumberjack Beard',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a big rugged lumberjack beard',
+    icon: '🪓',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'hair-facial-chinstrap',
+    name: 'Chinstrap',
+    category: 'hairstyles',
+    subcategory: 'facial-hair',
+    prompt: 'Give the person a thin chinstrap beard along the jawline',
+    icon: '⛓️',
+    intensity: 0.70,
+    gender: 'male',
+  },
+
+  // ============================================================
+  // HAIRSTYLES - Length (5 items) — all neutral
   // ============================================================
   {
     id: 'hair-length-very-short',
@@ -373,7 +663,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'length',
     prompt: "Change the person's hair to a very short cropped style",
-    icon: '\u2702\uFE0F',
+    icon: '✂️',
     intensity: 0.70,
   },
   {
@@ -382,7 +672,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'length',
     prompt: "Change the person's hair to a short above-the-ears length",
-    icon: '\uD83D\uDC48',
+    icon: '👈',
     intensity: 0.70,
   },
   {
@@ -391,7 +681,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'length',
     prompt: "Change the person's hair to a medium shoulder-length",
-    icon: '\u2194\uFE0F',
+    icon: '↔️',
     intensity: 0.70,
   },
   {
@@ -400,7 +690,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'length',
     prompt: "Change the person's hair to long hair reaching the middle of the back",
-    icon: '\u2B07\uFE0F',
+    icon: '⬇️',
     intensity: 0.70,
   },
   {
@@ -409,12 +699,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'hairstyles',
     subcategory: 'length',
     prompt: "Change the person's hair to very long flowing hair reaching the waist",
-    icon: '\uD83E\uDDDC',
+    icon: '🧜',
     intensity: 0.70,
   },
 
   // ============================================================
-  // MAKEUP - Lips (7 items)
+  // MAKEUP - Lips (7 items) — all female
   // ============================================================
   {
     id: 'makeup-lips-red',
@@ -422,8 +712,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: 'Apply classic red lipstick to the person',
-    icon: '\uD83D\uDC84',
+    icon: '💄',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-lips-nude',
@@ -431,8 +722,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: 'Apply natural nude lipstick to the person',
-    icon: '\uD83E\uDD0E',
+    icon: '🤎',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-lips-pink',
@@ -440,8 +732,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: 'Apply soft pink lipstick to the person',
-    icon: '\uD83C\uDF38',
+    icon: '🌸',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-lips-bold-berry',
@@ -449,8 +742,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: 'Apply bold berry-colored lipstick to the person',
-    icon: '\uD83C\uDF47',
+    icon: '🍇',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-lips-glossy',
@@ -458,8 +752,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: "Apply shiny glossy lip gloss to the person's lips",
-    icon: '\u2728',
+    icon: '✨',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-lips-matte-dark',
@@ -467,8 +762,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: 'Apply dark matte burgundy lipstick to the person',
-    icon: '\uD83D\uDDA4',
+    icon: '🖤',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-lips-ombre',
@@ -476,12 +772,13 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'lips',
     prompt: 'Apply ombre lip color to the person, darker on the outside fading to lighter in the center',
-    icon: '\uD83C\uDF05',
+    icon: '🌅',
     intensity: 0.60,
+    gender: 'female',
   },
 
   // ============================================================
-  // MAKEUP - Eyes (6 items)
+  // MAKEUP - Eyes (6 items) — all female
   // ============================================================
   {
     id: 'makeup-eyes-smokey',
@@ -489,8 +786,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'eyes',
     prompt: 'Apply dramatic smokey eye makeup with dark eyeshadow and blended edges to the person',
-    icon: '\uD83C\uDF2B\uFE0F',
+    icon: '🌫️',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-eyes-cat-eye',
@@ -498,8 +796,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'eyes',
     prompt: 'Apply cat eye winged eyeliner makeup to the person',
-    icon: '\uD83D\uDC31',
+    icon: '🐱',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-eyes-natural',
@@ -507,8 +806,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'eyes',
     prompt: 'Apply subtle natural eye makeup with light eyeshadow and thin eyeliner to the person',
-    icon: '\uD83C\uDF3F',
+    icon: '🌿',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-eyes-glitter',
@@ -516,8 +816,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'eyes',
     prompt: 'Apply sparkly glitter eyeshadow makeup to the person',
-    icon: '\uD83C\uDF1F',
+    icon: '🌟',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-eyes-dramatic-lashes',
@@ -525,8 +826,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'eyes',
     prompt: 'Apply dramatic long false eyelashes to the person',
-    icon: '\uD83E\uDEF6',
+    icon: '🫶',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-eyes-colored-contacts',
@@ -534,12 +836,13 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'eyes',
     prompt: "Change the person's eye color to bright blue",
-    icon: '\uD83D\uDD35',
+    icon: '🔵',
     intensity: 0.60,
+    gender: 'female',
   },
 
   // ============================================================
-  // MAKEUP - Face (5 items)
+  // MAKEUP - Face (5 items) — all female
   // ============================================================
   {
     id: 'makeup-face-clear-skin',
@@ -547,8 +850,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'face',
     prompt: 'Remove all makeup and give the person clear, natural, glowing skin',
-    icon: '\u2728',
+    icon: '✨',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-face-contoured',
@@ -556,8 +860,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'face',
     prompt: "Apply professional contouring makeup to the person's face, defining cheekbones and jawline",
-    icon: '\uD83D\uDC8E',
+    icon: '💎',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-face-bronzed-glow',
@@ -565,8 +870,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'face',
     prompt: 'Apply bronzer and highlighter to give the person a sun-kissed golden glow',
-    icon: '\u2600\uFE0F',
+    icon: '☀️',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-face-dewy-skin',
@@ -574,8 +880,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'face',
     prompt: 'Give the person dewy, glass-like skin with a luminous healthy glow',
-    icon: '\uD83D\uDCA7',
+    icon: '💧',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-face-freckles',
@@ -583,12 +890,13 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'face',
     prompt: "Add cute natural-looking freckles across the person's nose and cheeks",
-    icon: '\uD83E\uDD0E',
+    icon: '🤎',
     intensity: 0.60,
+    gender: 'female',
   },
 
   // ============================================================
-  // MAKEUP - Full Looks (8 items)
+  // MAKEUP - Full Looks (8 items) — female
   // ============================================================
   {
     id: 'makeup-full-natural-glam',
@@ -596,8 +904,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply natural glamour makeup with subtle eyeshadow, mascara, light blush, and nude lip',
-    icon: '\uD83C\uDF1F',
+    icon: '🌟',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-red-carpet',
@@ -605,8 +914,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply full red carpet glamour makeup with smokey eyes, contoured face, and bold red lips',
-    icon: '\uD83C\uDFC6',
+    icon: '🏆',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-gothic',
@@ -614,8 +924,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply gothic dark makeup with black eyeshadow, dark lipstick, and pale foundation',
-    icon: '\uD83E\uDDA7',
+    icon: '🦇',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-90s-supermodel',
@@ -623,8 +934,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply 90s supermodel makeup with brown lip liner, matte lips, and defined brows',
-    icon: '\uD83D\uDC60',
+    icon: '👠',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-avant-garde',
@@ -632,8 +944,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply artistic avant-garde makeup with bold colors and creative designs',
-    icon: '\uD83C\uDFA8',
+    icon: '🎨',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-k-beauty',
@@ -641,8 +954,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply Korean beauty makeup style with gradient lips, subtle blush, and dewy skin',
-    icon: '\uD83C\uDF38',
+    icon: '🌸',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-editorial',
@@ -650,8 +964,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply high fashion editorial makeup with bold artistic elements',
-    icon: '\uD83D\uDCF7',
+    icon: '📷',
     intensity: 0.60,
+    gender: 'female',
   },
   {
     id: 'makeup-full-bridal',
@@ -659,12 +974,135 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'makeup',
     subcategory: 'full-looks',
     prompt: 'Apply beautiful bridal wedding makeup with soft romantic tones and glowing skin',
-    icon: '\uD83D\uDC70',
+    icon: '👰',
     intensity: 0.60,
+    gender: 'female',
   },
 
   // ============================================================
-  // CLOTHING - Formal (4 items)
+  // GROOMING - Skin (male)
+  // ============================================================
+  {
+    id: 'grooming-skin-clear',
+    name: 'Clear Skin',
+    category: 'makeup',
+    subcategory: 'skin',
+    prompt: 'Give the person clear blemish-free skin with a natural healthy look',
+    icon: '✨',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-skin-bronzed',
+    name: 'Bronzed',
+    category: 'makeup',
+    subcategory: 'skin',
+    prompt: 'Give the person a sun-kissed bronzed skin tone',
+    icon: '☀️',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-skin-matte',
+    name: 'Matte Skin',
+    category: 'makeup',
+    subcategory: 'skin',
+    prompt: 'Give the person smooth matte skin with no shine',
+    icon: '🪨',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-skin-healthy-glow',
+    name: 'Healthy Glow',
+    category: 'makeup',
+    subcategory: 'skin',
+    prompt: 'Give the person healthy glowing skin with a natural radiance',
+    icon: '💡',
+    intensity: 0.60,
+    gender: 'male',
+  },
+
+  // ============================================================
+  // GROOMING - Brows (male)
+  // ============================================================
+  {
+    id: 'grooming-brows-thick',
+    name: 'Thick Brows',
+    category: 'makeup',
+    subcategory: 'brows',
+    prompt: 'Give the person thick bold eyebrows',
+    icon: '🟫',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-brows-groomed',
+    name: 'Groomed Brows',
+    category: 'makeup',
+    subcategory: 'brows',
+    prompt: 'Give the person neatly groomed and shaped eyebrows',
+    icon: '✂️',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-brows-bushy',
+    name: 'Bushy Brows',
+    category: 'makeup',
+    subcategory: 'brows',
+    prompt: 'Give the person natural bushy eyebrows',
+    icon: '🌿',
+    intensity: 0.60,
+    gender: 'male',
+  },
+
+  // ============================================================
+  // GROOMING - Full Looks (male)
+  // ============================================================
+  {
+    id: 'grooming-full-well-groomed',
+    name: 'Well-Groomed',
+    category: 'makeup',
+    subcategory: 'full-looks',
+    prompt: 'Give the person a polished well-groomed look with clean skin and neat facial hair',
+    icon: '👔',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-full-rugged',
+    name: 'Rugged',
+    category: 'makeup',
+    subcategory: 'full-looks',
+    prompt: 'Give the person a rugged masculine look with textured skin and slight stubble',
+    icon: '🏔️',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-full-pretty-boy',
+    name: 'Pretty Boy',
+    category: 'makeup',
+    subcategory: 'full-looks',
+    prompt: 'Give the person a refined pretty boy look with flawless skin and defined features',
+    icon: '💎',
+    intensity: 0.60,
+    gender: 'male',
+  },
+  {
+    id: 'grooming-full-distinguished',
+    name: 'Distinguished',
+    category: 'makeup',
+    subcategory: 'full-looks',
+    prompt: 'Give the person a distinguished mature look with subtle gray at the temples and refined features',
+    icon: '🎩',
+    intensity: 0.60,
+    gender: 'male',
+  },
+
+  // ============================================================
+  // CLOTHING - Formal
   // ============================================================
   {
     id: 'clothing-formal-business-suit',
@@ -672,7 +1110,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'formal',
     prompt: "Replace the person's outfit with a tailored professional business suit",
-    icon: '\uD83D\uDCBC',
+    icon: '💼',
     intensity: 0.75,
   },
   {
@@ -681,8 +1119,29 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'formal',
     prompt: "Replace the person's outfit with an elegant black tuxedo with bow tie",
-    icon: '\uD83E\uDD35',
+    icon: '🤵',
     intensity: 0.75,
+    gender: 'male',
+  },
+  {
+    id: 'clothing-formal-three-piece',
+    name: 'Three-Piece Suit',
+    category: 'clothing',
+    subcategory: 'formal',
+    prompt: "Replace the person's outfit with a classic three-piece suit with vest",
+    icon: '🤵',
+    intensity: 0.75,
+    gender: 'male',
+  },
+  {
+    id: 'clothing-formal-military',
+    name: 'Military Dress',
+    category: 'clothing',
+    subcategory: 'formal',
+    prompt: "Replace the person's outfit with a formal military dress uniform",
+    icon: '🎖️',
+    intensity: 0.75,
+    gender: 'male',
   },
   {
     id: 'clothing-formal-evening-gown',
@@ -690,8 +1149,9 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'formal',
     prompt: "Replace the person's outfit with a stunning floor-length evening gown",
-    icon: '\uD83D\uDC57',
+    icon: '👗',
     intensity: 0.75,
+    gender: 'female',
   },
   {
     id: 'clothing-formal-cocktail-dress',
@@ -699,12 +1159,33 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'formal',
     prompt: "Replace the person's outfit with a stylish cocktail dress",
-    icon: '\uD83C\uDF78',
+    icon: '🍸',
     intensity: 0.75,
+    gender: 'female',
+  },
+  {
+    id: 'clothing-formal-ball-gown',
+    name: 'Ball Gown',
+    category: 'clothing',
+    subcategory: 'formal',
+    prompt: "Replace the person's outfit with a grand ball gown with flowing skirt",
+    icon: '👸',
+    intensity: 0.75,
+    gender: 'female',
+  },
+  {
+    id: 'clothing-formal-jumpsuit',
+    name: 'Jumpsuit',
+    category: 'clothing',
+    subcategory: 'formal',
+    prompt: "Replace the person's outfit with a sleek tailored jumpsuit",
+    icon: '🦸‍♀️',
+    intensity: 0.75,
+    gender: 'female',
   },
 
   // ============================================================
-  // CLOTHING - Casual (5 items)
+  // CLOTHING - Casual
   // ============================================================
   {
     id: 'clothing-casual-streetwear',
@@ -712,7 +1193,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'casual',
     prompt: "Replace the person's outfit with trendy urban streetwear",
-    icon: '\uD83D\uDC5F',
+    icon: '👟',
     intensity: 0.75,
   },
   {
@@ -721,7 +1202,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'casual',
     prompt: "Replace the person's outfit with stylish athletic athleisure wear",
-    icon: '\uD83C\uDFC3',
+    icon: '🏃',
     intensity: 0.75,
   },
   {
@@ -730,7 +1211,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'casual',
     prompt: "Replace the person's outfit with a bohemian flowing outfit with natural fabrics",
-    icon: '\uD83C\uDF3B',
+    icon: '🌻',
     intensity: 0.75,
   },
   {
@@ -739,7 +1220,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'casual',
     prompt: "Replace the person's outfit with a preppy outfit with polo shirt and clean lines",
-    icon: '\uD83C\uDFCC\uFE0F',
+    icon: '🏌️',
     intensity: 0.75,
   },
   {
@@ -748,12 +1229,52 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'casual',
     prompt: "Replace the person's outfit with a minimalist modern outfit in neutral tones",
-    icon: '\u25AB\uFE0F',
+    icon: '▫️',
     intensity: 0.75,
+  },
+  {
+    id: 'clothing-casual-workwear',
+    name: 'Workwear',
+    category: 'clothing',
+    subcategory: 'casual',
+    prompt: "Replace the person's outfit with rugged workwear with boots and denim",
+    icon: '🔧',
+    intensity: 0.75,
+    gender: 'male',
+  },
+  {
+    id: 'clothing-casual-biker',
+    name: 'Biker',
+    category: 'clothing',
+    subcategory: 'casual',
+    prompt: "Replace the person's outfit with a leather biker jacket and boots",
+    icon: '🏍️',
+    intensity: 0.75,
+    gender: 'male',
+  },
+  {
+    id: 'clothing-casual-cottagecore',
+    name: 'Cottagecore',
+    category: 'clothing',
+    subcategory: 'casual',
+    prompt: "Replace the person's outfit with a cottagecore outfit with floral dress and natural fabrics",
+    icon: '🌸',
+    intensity: 0.75,
+    gender: 'female',
+  },
+  {
+    id: 'clothing-casual-y2k-girly',
+    name: 'Y2K Girly',
+    category: 'clothing',
+    subcategory: 'casual',
+    prompt: "Replace the person's outfit with Y2K girly fashion with low-rise and baby tees",
+    icon: '💖',
+    intensity: 0.75,
+    gender: 'female',
   },
 
   // ============================================================
-  // CLOTHING - Cultural (4 items)
+  // CLOTHING - Cultural (4 items) — all neutral
   // ============================================================
   {
     id: 'clothing-cultural-kimono',
@@ -761,7 +1282,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'cultural',
     prompt: "Replace the person's outfit with a beautiful traditional Japanese kimono",
-    icon: '\uD83C\uDF8C',
+    icon: '🎌',
     intensity: 0.75,
   },
   {
@@ -770,7 +1291,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'cultural',
     prompt: "Replace the person's outfit with an elegant traditional Indian sari",
-    icon: '\uD83E\uDD0E',
+    icon: '🤎',
     intensity: 0.75,
   },
   {
@@ -779,7 +1300,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'cultural',
     prompt: "Replace the person's outfit with a traditional Korean hanbok",
-    icon: '\uD83C\uDDF0\uD83C\uDDF7',
+    icon: '🇰🇷',
     intensity: 0.75,
   },
   {
@@ -788,12 +1309,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'cultural',
     prompt: "Replace the person's outfit with traditional Scottish highland dress with tartan kilt",
-    icon: '\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F',
+    icon: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
     intensity: 0.75,
   },
 
   // ============================================================
-  // CLOTHING - Decades (7 items)
+  // CLOTHING - Decades (7 items) — all neutral
   // ============================================================
   {
     id: 'clothing-decades-1950s',
@@ -801,7 +1322,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with 1950s retro fashion",
-    icon: '\uD83D\uDD7A',
+    icon: '🕺',
     intensity: 0.75,
   },
   {
@@ -810,7 +1331,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with 1960s mod fashion",
-    icon: '\u262E\uFE0F',
+    icon: '☮️',
     intensity: 0.75,
   },
   {
@@ -819,7 +1340,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with 1970s disco fashion",
-    icon: '\uD83D\uDD7A',
+    icon: '🕺',
     intensity: 0.75,
   },
   {
@@ -828,7 +1349,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with 1980s power fashion with bold colors and shoulder pads",
-    icon: '\uD83C\uDF99\uFE0F',
+    icon: '🎙️',
     intensity: 0.75,
   },
   {
@@ -837,7 +1358,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with 1990s grunge fashion",
-    icon: '\uD83C\uDFB8',
+    icon: '🎸',
     intensity: 0.75,
   },
   {
@@ -846,7 +1367,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with Y2K fashion style",
-    icon: '\uD83D\uDCBF',
+    icon: '💿',
     intensity: 0.75,
   },
   {
@@ -855,12 +1376,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'clothing',
     subcategory: 'decades',
     prompt: "Replace the person's outfit with futuristic sci-fi fashion",
-    icon: '\uD83D\uDE80',
+    icon: '🚀',
     intensity: 0.75,
   },
 
   // ============================================================
-  // FACIAL - Nose (4 items)
+  // FACIAL - Nose (4 items) — all neutral
   // ============================================================
   {
     id: 'facial-nose-smaller',
@@ -868,7 +1389,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'nose',
     prompt: "Make the person's nose slightly smaller and more refined while keeping their identity",
-    icon: '\uD83D\uDC43',
+    icon: '👃',
     intensity: 0.55,
   },
   {
@@ -877,7 +1398,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'nose',
     prompt: 'Give the person a cute button nose while keeping everything else the same',
-    icon: '\uD83D\uDD18',
+    icon: '🔘',
     intensity: 0.55,
   },
   {
@@ -886,7 +1407,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'nose',
     prompt: 'Give the person a straight nose bridge while keeping everything else the same',
-    icon: '\u2796',
+    icon: '➖',
     intensity: 0.55,
   },
   {
@@ -895,12 +1416,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'nose',
     prompt: "Make the person's nose slightly wider while keeping everything else the same",
-    icon: '\u2194\uFE0F',
+    icon: '↔️',
     intensity: 0.55,
   },
 
   // ============================================================
-  // FACIAL - Jawline (4 items)
+  // FACIAL - Jawline (4 items) — all neutral
   // ============================================================
   {
     id: 'facial-jawline-chiseled',
@@ -908,7 +1429,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'jawline',
     prompt: 'Give the person a sharper more chiseled jawline while keeping everything else the same',
-    icon: '\uD83D\uDCA0',
+    icon: '💠',
     intensity: 0.55,
   },
   {
@@ -917,7 +1438,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'jawline',
     prompt: 'Give the person a softer more rounded jawline while keeping everything else the same',
-    icon: '\u2B55',
+    icon: '⭕',
     intensity: 0.55,
   },
   {
@@ -926,7 +1447,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'jawline',
     prompt: 'Give the person a strong square jawline while keeping everything else the same',
-    icon: '\u25FE',
+    icon: '◾',
     intensity: 0.55,
   },
   {
@@ -935,12 +1456,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'jawline',
     prompt: 'Give the person a V-shaped jawline while keeping everything else the same',
-    icon: '\u2714\uFE0F',
+    icon: '✔️',
     intensity: 0.55,
   },
 
   // ============================================================
-  // FACIAL - Eyes (4 items)
+  // FACIAL - Eyes (4 items) — all neutral
   // ============================================================
   {
     id: 'facial-eyes-larger',
@@ -948,7 +1469,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'eyes',
     prompt: "Make the person's eyes slightly larger and more prominent",
-    icon: '\uD83D\uDC40',
+    icon: '👀',
     intensity: 0.55,
   },
   {
@@ -957,7 +1478,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'eyes',
     prompt: 'Give the person more almond-shaped eyes',
-    icon: '\uD83C\uDF30',
+    icon: '🌰',
     intensity: 0.55,
   },
   {
@@ -966,7 +1487,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'eyes',
     prompt: 'Give the person rounder more open eyes',
-    icon: '\u26AA',
+    icon: '⚪',
     intensity: 0.55,
   },
   {
@@ -975,12 +1496,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'eyes',
     prompt: "Change the person's eye color to vivid green",
-    icon: '\uD83D\uDFE2',
+    icon: '🟢',
     intensity: 0.55,
   },
 
   // ============================================================
-  // FACIAL - Lips (4 items)
+  // FACIAL - Lips (4 items) — all neutral
   // ============================================================
   {
     id: 'facial-lips-fuller',
@@ -988,7 +1509,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'lips',
     prompt: 'Give the person fuller plumper lips while keeping everything else the same',
-    icon: '\uD83D\uDC44',
+    icon: '👄',
     intensity: 0.55,
   },
   {
@@ -997,7 +1518,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'lips',
     prompt: 'Give the person thinner more refined lips while keeping everything else the same',
-    icon: '\u2796',
+    icon: '➖',
     intensity: 0.55,
   },
   {
@@ -1006,7 +1527,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'lips',
     prompt: 'Give the person a wider more prominent smile',
-    icon: '\uD83D\uDE01',
+    icon: '😁',
     intensity: 0.55,
   },
   {
@@ -1015,12 +1536,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'lips',
     prompt: "Give the person more defined cupid's bow lips",
-    icon: '\uD83C\uDFF9',
+    icon: '🏹',
     intensity: 0.55,
   },
 
   // ============================================================
-  // FACIAL - Cheekbones (3 items)
+  // FACIAL - Cheekbones (3 items) — all neutral
   // ============================================================
   {
     id: 'facial-cheekbones-higher',
@@ -1028,7 +1549,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'cheekbones',
     prompt: 'Give the person higher more prominent cheekbones',
-    icon: '\u2B06\uFE0F',
+    icon: '⬆️',
     intensity: 0.55,
   },
   {
@@ -1037,7 +1558,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'cheekbones',
     prompt: "Make the person's cheekbones more defined and sculpted",
-    icon: '\uD83D\uDC8E',
+    icon: '💎',
     intensity: 0.55,
   },
   {
@@ -1046,12 +1567,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'facial',
     subcategory: 'cheekbones',
     prompt: 'Give the person softer less prominent cheekbones for a rounder face shape',
-    icon: '\u2B55',
+    icon: '⭕',
     intensity: 0.55,
   },
 
   // ============================================================
-  // BODY - Body (5 items)
+  // BODY
   // ============================================================
   {
     id: 'body-slimmer',
@@ -1059,7 +1580,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'body',
     subcategory: 'body',
     prompt: 'Make the person appear slimmer and more toned',
-    icon: '\uD83E\uDDD8',
+    icon: '🧘',
     intensity: 0.70,
   },
   {
@@ -1068,16 +1589,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'body',
     subcategory: 'body',
     prompt: 'Make the person appear more muscular and athletic',
-    icon: '\uD83C\uDFC3',
-    intensity: 0.70,
-  },
-  {
-    id: 'body-curvier',
-    name: 'Curvier',
-    category: 'body',
-    subcategory: 'body',
-    prompt: 'Make the person appear curvier with more defined curves',
-    icon: '\u27B0',
+    icon: '🏃',
     intensity: 0.70,
   },
   {
@@ -1086,7 +1598,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'body',
     subcategory: 'body',
     prompt: 'Make the person appear taller with longer proportions',
-    icon: '\u2B06\uFE0F',
+    icon: '⬆️',
     intensity: 0.70,
   },
   {
@@ -1095,12 +1607,62 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'body',
     subcategory: 'body',
     prompt: 'Make the person appear as a muscular bodybuilder',
-    icon: '\uD83D\uDCAA',
+    icon: '💪',
     intensity: 0.70,
+  },
+  {
+    id: 'body-curvier',
+    name: 'Curvier',
+    category: 'body',
+    subcategory: 'body',
+    prompt: 'Make the person appear curvier with more defined curves',
+    icon: '➰',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'body-hourglass',
+    name: 'Hourglass',
+    category: 'body',
+    subcategory: 'body',
+    prompt: 'Give the person an hourglass figure with defined waist',
+    icon: '⏳',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'body-petite',
+    name: 'Petite',
+    category: 'body',
+    subcategory: 'body',
+    prompt: 'Make the person appear petite with a smaller more delicate frame',
+    icon: '🌷',
+    intensity: 0.70,
+    gender: 'female',
+  },
+  {
+    id: 'body-broad-shoulders',
+    name: 'Broad Shoulders',
+    category: 'body',
+    subcategory: 'body',
+    prompt: 'Give the person broader more muscular shoulders',
+    icon: '🔱',
+    intensity: 0.70,
+    gender: 'male',
+  },
+  {
+    id: 'body-lean-ripped',
+    name: 'Lean & Ripped',
+    category: 'body',
+    subcategory: 'body',
+    prompt: 'Make the person appear lean and ripped with visible muscle definition',
+    icon: '🏋️',
+    intensity: 0.70,
+    gender: 'male',
   },
 
   // ============================================================
-  // AGE-FANTASY - Age (6 items)
+  // AGE-FANTASY - Age (6 items) — all neutral
   // ============================================================
   {
     id: 'age-10-younger',
@@ -1108,7 +1670,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'age',
     prompt: 'Make the person look 10 years younger while preserving their identity',
-    icon: '\u23EA',
+    icon: '⏪',
     intensity: 0.70,
   },
   {
@@ -1117,7 +1679,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'age',
     prompt: 'Make the person look 20 years younger while preserving their identity',
-    icon: '\u23EA',
+    icon: '⏪',
     intensity: 0.70,
   },
   {
@@ -1126,7 +1688,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'age',
     prompt: 'Make the person look like a teenager while preserving their identity',
-    icon: '\uD83E\uDDD2',
+    icon: '🧒',
     intensity: 0.70,
   },
   {
@@ -1135,7 +1697,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'age',
     prompt: 'Make the person look 10 years older while preserving their identity',
-    icon: '\u23E9',
+    icon: '⏩',
     intensity: 0.70,
   },
   {
@@ -1144,7 +1706,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'age',
     prompt: 'Make the person look 20 years older while preserving their identity',
-    icon: '\u23E9',
+    icon: '⏩',
     intensity: 0.70,
   },
   {
@@ -1153,12 +1715,12 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'age',
     prompt: 'Make the person look elderly with wrinkles and gray hair while preserving their identity',
-    icon: '\uD83E\uDDD3',
+    icon: '🧓',
     intensity: 0.70,
   },
 
   // ============================================================
-  // AGE-FANTASY - Fantasy (12 items)
+  // AGE-FANTASY - Fantasy (12 items) — all neutral
   // ============================================================
   {
     id: 'fantasy-elf',
@@ -1166,7 +1728,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a fantasy elf with pointed ears and ethereal features',
-    icon: '\uD83E\uDDDD',
+    icon: '🧝',
     intensity: 0.85,
   },
   {
@@ -1175,7 +1737,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a vampire with pale skin, fangs, and red eyes',
-    icon: '\uD83E\uDDDB',
+    icon: '🧛',
     intensity: 0.85,
   },
   {
@@ -1184,7 +1746,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a zombie with decaying skin and hollow eyes',
-    icon: '\uD83E\uDDDF',
+    icon: '🧟',
     intensity: 0.85,
   },
   {
@@ -1193,7 +1755,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into an alien with otherworldly features',
-    icon: '\uD83D\uDC7D',
+    icon: '👽',
     intensity: 0.85,
   },
   {
@@ -1202,7 +1764,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a cyborg with robotic mechanical parts on their face',
-    icon: '\uD83E\uDD16',
+    icon: '🤖',
     intensity: 0.85,
   },
   {
@@ -1211,7 +1773,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a fairy with glowing skin and sparkly wings',
-    icon: '\uD83E\uDDDA',
+    icon: '🧚',
     intensity: 0.85,
   },
   {
@@ -1220,7 +1782,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a mermaid with iridescent scales and ocean-themed look',
-    icon: '\uD83E\uDDDC',
+    icon: '🧜',
     intensity: 0.85,
   },
   {
@@ -1229,7 +1791,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a superhero with a mask and cape',
-    icon: '\uD83E\uDDB8',
+    icon: '🦸',
     intensity: 0.85,
   },
   {
@@ -1238,7 +1800,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into an anime character with large eyes and stylized features',
-    icon: '\uD83C\uDFAD',
+    icon: '🎭',
     intensity: 0.85,
   },
   {
@@ -1247,7 +1809,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a Pixar 3D animated character',
-    icon: '\uD83C\uDFAC',
+    icon: '🎬',
     intensity: 0.85,
   },
   {
@@ -1256,7 +1818,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a werewolf with fur and sharp features',
-    icon: '\uD83D\uDC3A',
+    icon: '🐺',
     intensity: 0.85,
   },
   {
@@ -1265,7 +1827,7 @@ export const TRANSFORMATIONS: Transformation[] = [
     category: 'age-fantasy',
     subcategory: 'fantasy',
     prompt: 'Transform the person into a dragon-human hybrid with scales and horns',
-    icon: '\uD83D\uDC09',
+    icon: '🐉',
     intensity: 0.85,
   },
 ];
@@ -1275,20 +1837,43 @@ export const TRANSFORMATIONS: Transformation[] = [
 // ============================================================
 
 /**
- * Get all transformations for a given category.
+ * Get subcategories filtered by gender.
  */
-export function getTransformationsByCategory(category: TransformationCategory): Transformation[] {
-  return TRANSFORMATIONS.filter((t) => t.category === category);
+export function getSubcategoriesForGender(
+  category: TransformationCategory,
+  gender: Gender | null,
+): TransformationSubcategory[] {
+  const subs = SUBCATEGORIES[category] ?? [];
+  if (!gender) return subs.filter((s) => !s.gender);
+  return subs.filter((s) => !s.gender || s.gender === gender);
 }
 
 /**
- * Get all transformations for a given category and subcategory.
+ * Get all transformations for a given category, optionally filtered by gender.
+ */
+export function getTransformationsByCategory(
+  category: TransformationCategory,
+  gender?: Gender | null,
+): Transformation[] {
+  return TRANSFORMATIONS.filter(
+    (t) => t.category === category && (!gender || !t.gender || t.gender === gender),
+  );
+}
+
+/**
+ * Get all transformations for a given category and subcategory, optionally filtered by gender.
  */
 export function getTransformationsBySubcategory(
   category: TransformationCategory,
   subcategory: string,
+  gender?: Gender | null,
 ): Transformation[] {
-  return TRANSFORMATIONS.filter((t) => t.category === category && t.subcategory === subcategory);
+  return TRANSFORMATIONS.filter(
+    (t) =>
+      t.category === category &&
+      t.subcategory === subcategory &&
+      (!gender || !t.gender || t.gender === gender),
+  );
 }
 
 /**
