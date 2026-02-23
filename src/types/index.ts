@@ -84,6 +84,8 @@ export interface AuthState {
 }
 
 // App State
+export type Gender = 'female' | 'male';
+
 export type AppView = 'landing' | 'capture' | 'studio' | 'results' | 'history';
 
 export interface AppSettings {
