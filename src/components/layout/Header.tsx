@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import Button from '@/components/common/Button';
 import LoginModal from '@/components/auth/LoginModal';
+import UserMenu from '@/components/layout/UserMenu';
 
 function Header() {
   const { authState, currentView, setCurrentView } = useApp();
@@ -47,11 +48,7 @@ function Header() {
             )}
 
             {authState.isAuthenticated && authState.user ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-white/50">
-                  {authState.user.username}
-                </span>
-              </div>
+              <UserMenu />
             ) : (
               <div className="flex items-center gap-2">
                 <Button
