@@ -1,9 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import type { Gender } from '@/types';
 import Button from '@/components/common/Button';
 import { VenusIcon, MarsIcon } from './GenderIcons';
+
+type ImagePair = { before: string; after: string };
+
+const femalePairs: ImagePair[] = [
+  { before: '/images/before.png', after: '/images/after.png' },
+  { before: '/images/before3.png', after: '/images/after3.png' },
+  { before: '/images/before4.png', after: '/images/after4.png' },
+  { before: '/images/before5.png', after: '/images/after5.png' },
+];
+
+const malePairs: ImagePair[] = [
+  { before: '/images/before2.png', after: '/images/after2.png' },
+  { before: '/images/before6.png', after: '/images/after6.png' },
+  { before: '/images/before7.png', after: '/images/after7.png' },
+  { before: '/images/before8.png', after: '/images/after8.png' },
+];
 
 const containerVariants = {
   hidden: {},
@@ -40,6 +56,83 @@ function LandingHero() {
   const [activeTileIndex, setActiveTileIndex] = useState(0);
   const [isTilesHovered, setIsTilesHovered] = useState(false);
 
+  // Portrait slideshow state
+  const [portraitDisplay, setPortraitDisplay] = useState({
+    layers: [
+      { before: femalePairs[0].before, after: femalePairs[0].after },
+      { before: femalePairs[0].before, after: femalePairs[0].after },
+    ] as [ImagePair, ImagePair],
+    activeLayer: 0 as 0 | 1,
+  });
+  const lastGenderRef = useRef<'female' | 'male'>('female');
+  const shuffleBagRef = useRef<Record<string, number[]>>({ female: [], male: [] });
+
+  const transitionTo = useCallback((pair: ImagePair) => {
+    setPortraitDisplay(prev => {
+      const inactive = prev.activeLayer === 0 ? 1 : 0;
+      const newLayers = [...prev.layers] as [ImagePair, ImagePair];
+      newLayers[inactive] = pair;
+      return { layers: newLayers, activeLayer: inactive as 0 | 1 };
+    });
+  }, []);
+
+  const pickNextPair = useCallback((gender: 'female' | 'male', lastShown?: number): ImagePair => {
+    const pairs = gender === 'female' ? femalePairs : malePairs;
+    let bag = shuffleBagRef.current[gender];
+    if (bag.length === 0) {
+      // Refill: all indices, shuffled (Fisher-Yates)
+      bag = Array.from({ length: pairs.length }, (_, i) => i);
+      for (let i = bag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [bag[i], bag[j]] = [bag[j], bag[i]];
+      }
+      // Avoid repeating the last-shown pair across reshuffles
+      if (bag[0] === lastShown && bag.length > 1) {
+        const swapIdx = 1 + Math.floor(Math.random() * (bag.length - 1));
+        [bag[0], bag[swapIdx]] = [bag[swapIdx], bag[0]];
+      }
+      shuffleBagRef.current[gender] = bag;
+    }
+    const nextIdx = bag.shift()!;
+    return pairs[nextIdx];
+  }, []);
+
+  // Portrait rotation effect
+  useEffect(() => {
+    let lastShownIdx = 0;
+
+    if (hoveredGender) {
+      // Immediately show the hovered gender's main pair
+      // Reset bag so hover always starts fresh from the full set
+      shuffleBagRef.current[hoveredGender] = [];
+      const pairs = hoveredGender === 'female' ? femalePairs : malePairs;
+      transitionTo(pairs[0]);
+      lastGenderRef.current = hoveredGender;
+      lastShownIdx = 0;
+
+      // Rotate through same-gender pairs
+      const interval = setInterval(() => {
+        const pair = pickNextPair(hoveredGender, lastShownIdx);
+        const pairs = hoveredGender === 'female' ? femalePairs : malePairs;
+        lastShownIdx = pairs.indexOf(pair);
+        transitionTo(pair);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+
+    // Idle mode: alternate genders
+    const lastShown: Record<string, number> = { female: 0, male: -1 };
+    const interval = setInterval(() => {
+      const nextGender = lastGenderRef.current === 'female' ? 'male' : 'female';
+      const pair = pickNextPair(nextGender, lastShown[nextGender]);
+      const pairs = nextGender === 'female' ? femalePairs : malePairs;
+      lastShown[nextGender] = pairs.indexOf(pair);
+      transitionTo(pair);
+      lastGenderRef.current = nextGender;
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [hoveredGender]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (isTilesHovered) return;
     const interval = setInterval(() => {
@@ -75,32 +168,25 @@ function LandingHero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
         className="pointer-events-none absolute left-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-left-[calc(5%-5px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
-          maskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 5%, black 95%, transparent 100%)',
+          maskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
           maskComposite: 'intersect',
-          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 5%, black 95%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
           WebkitMaskComposite: 'source-in',
         }}
       >
-        <img
-          src="/images/before.png"
-          alt=""
-          className="h-full w-full object-cover object-right transition-[opacity,transform] duration-700 ease-in-out"
-          style={{
-            filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
-            opacity: hoveredGender === 'male' ? 0 : 0.7,
-            transform: hoveredGender === 'male' ? 'translateX(-20px)' : 'translateX(0)',
-          }}
-        />
-        <img
-          src="/images/before2.png"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-right transition-[opacity,transform] duration-700 ease-in-out"
-          style={{
-            filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
-            opacity: hoveredGender === 'male' ? 0.7 : 0,
-            transform: hoveredGender === 'male' ? 'translateX(0)' : 'translateX(-20px)',
-          }}
-        />
+        {portraitDisplay.layers.map((layer, i) => (
+          <img
+            key={i}
+            src={layer.before}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-right transition-[opacity,transform] duration-700 ease-in-out"
+            style={{
+              filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
+              opacity: portraitDisplay.activeLayer === i ? 0.7 : 0,
+              transform: portraitDisplay.activeLayer === i ? 'scale(0.95)' : 'translateX(-20px) scale(0.95)',
+            }}
+          />
+        ))}
       </motion.div>
 
       <motion.div
@@ -109,32 +195,25 @@ function LandingHero() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
         className="pointer-events-none absolute right-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-right-[calc(5%-5px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
-          maskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 5%, black 95%, transparent 100%)',
+          maskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
           maskComposite: 'intersect',
-          WebkitMaskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 5%, black 95%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 2%, black 98%, transparent 100%)',
           WebkitMaskComposite: 'source-in',
         }}
       >
-        <img
-          src="/images/after.png"
-          alt=""
-          className="h-full w-full object-cover object-left transition-[opacity,transform] duration-700 ease-in-out"
-          style={{
-            filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
-            opacity: hoveredGender === 'male' ? 0 : 0.75,
-            transform: hoveredGender === 'male' ? 'translateX(20px)' : 'translateX(0)',
-          }}
-        />
-        <img
-          src="/images/after2.png"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-left transition-[opacity,transform] duration-700 ease-in-out"
-          style={{
-            filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
-            opacity: hoveredGender === 'male' ? 0.75 : 0,
-            transform: hoveredGender === 'male' ? 'translateX(0)' : 'translateX(20px)',
-          }}
-        />
+        {portraitDisplay.layers.map((layer, i) => (
+          <img
+            key={i}
+            src={layer.after}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-left transition-[opacity,transform] duration-700 ease-in-out"
+            style={{
+              filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
+              opacity: portraitDisplay.activeLayer === i ? 0.75 : 0,
+              transform: portraitDisplay.activeLayer === i ? 'scale(0.95)' : 'translateX(20px) scale(0.95)',
+            }}
+          />
+        ))}
       </motion.div>
 
       <motion.div

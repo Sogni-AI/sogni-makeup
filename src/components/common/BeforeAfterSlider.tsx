@@ -13,6 +13,12 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
   const containerRef = useRef<HTMLDivElement>(null);
   const naturalSizeRef = useRef<{ width: number; height: number } | null>(null);
 
+  // Reset sizing when images change to prevent stale dimensions / FOUC
+  useEffect(() => {
+    setDisplaySize(null);
+    naturalSizeRef.current = null;
+  }, [afterImage]);
+
   // Compute display size that fits within parent while maintaining aspect ratio
   const computeDisplaySize = useCallback(() => {
     const el = containerRef.current;
@@ -109,7 +115,7 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
   return (
     <div
       ref={containerRef}
-      className={`relative cursor-col-resize select-none overflow-hidden rounded-2xl ${className}`}
+      className={`relative cursor-col-resize select-none overflow-hidden rounded-2xl transition-opacity duration-300 ${displaySize ? 'opacity-100' : 'opacity-0'} ${className}`}
       style={{
         touchAction: 'none',
         ...(displaySize ? { width: displaySize.width, height: displaySize.height } : {}),
@@ -131,7 +137,7 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
       <img
         src={afterImage}
         alt="After transformation"
-        className="block h-full w-full"
+        className="block h-full w-full object-cover"
         onLoad={handleAfterImageLoad}
         draggable={false}
       />
@@ -140,7 +146,7 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
       <img
         src={beforeImage}
         alt="Before transformation"
-        className="absolute inset-0 block h-full w-full"
+        className="absolute inset-0 block h-full w-full object-cover"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
         draggable={false}
       />
