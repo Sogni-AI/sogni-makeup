@@ -167,7 +167,7 @@ function LandingHero() {
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-        className="pointer-events-none absolute left-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-left-[calc(5%-5px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
+        className="pointer-events-none absolute left-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-left-[calc(5%+10px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
           maskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           maskComposite: 'intersect',
@@ -176,16 +176,17 @@ function LandingHero() {
         }}
       >
         {portraitDisplay.layers.map((layer, i) => (
-          <img
+          <div
             key={i}
-            src={layer.before}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-in-out"
+            className="absolute inset-0 transition-[opacity,transform] duration-700 ease-in-out"
             style={{
-              objectPosition: 'right top',
+              backgroundImage: `url(${layer.before})`,
+              backgroundSize: 'auto 100%',
+              backgroundPosition: 'right center',
+              backgroundRepeat: 'no-repeat',
               filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
               opacity: portraitDisplay.activeLayer === i ? 0.7 : 0,
-              transform: portraitDisplay.activeLayer === i ? 'scale(1)' : 'translateX(-20px) scale(1)',
+              transform: portraitDisplay.activeLayer === i ? undefined : 'translateX(-20px)',
             }}
           />
         ))}
@@ -195,7 +196,7 @@ function LandingHero() {
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-        className="pointer-events-none absolute right-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-right-[calc(5%-5px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
+        className="pointer-events-none absolute right-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-right-[calc(5%+10px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
           maskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           maskComposite: 'intersect',
@@ -204,16 +205,17 @@ function LandingHero() {
         }}
       >
         {portraitDisplay.layers.map((layer, i) => (
-          <img
+          <div
             key={i}
-            src={layer.after}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-in-out"
+            className="absolute inset-0 transition-[opacity,transform] duration-700 ease-in-out"
             style={{
-              objectPosition: 'left top',
+              backgroundImage: `url(${layer.after})`,
+              backgroundSize: 'auto 100%',
+              backgroundPosition: 'left center',
+              backgroundRepeat: 'no-repeat',
               filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
               opacity: portraitDisplay.activeLayer === i ? 0.75 : 0,
-              transform: portraitDisplay.activeLayer === i ? 'scale(1)' : 'translateX(20px) scale(1)',
+              transform: portraitDisplay.activeLayer === i ? undefined : 'translateX(20px)',
             }}
           />
         ))}
