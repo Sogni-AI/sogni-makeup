@@ -167,7 +167,7 @@ function LandingHero() {
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-        className="pointer-events-none absolute left-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-left-[calc(5%+10px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
+        className="pointer-events-none absolute -left-3 top-0 h-full w-[45%] opacity-[0.08] sm:w-[44%] md:w-[44%] md:opacity-25 lg:-left-[calc(5%+10px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
           maskImage: 'linear-gradient(to right, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           maskComposite: 'intersect',
@@ -196,7 +196,7 @@ function LandingHero() {
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-        className="pointer-events-none absolute right-0 top-0 h-full w-[55%] opacity-15 sm:w-[48%] md:w-[44%] md:opacity-35 lg:-right-[calc(5%+10px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
+        className="pointer-events-none absolute -right-3 top-0 h-full w-[45%] opacity-[0.08] sm:w-[44%] md:w-[44%] md:opacity-25 lg:-right-[calc(5%+10px)] lg:w-[38%] lg:opacity-100 xl:w-[35%]"
         style={{
           maskImage: 'linear-gradient(to left, black 0%, black 98%, transparent 100%), linear-gradient(to top, transparent 0%, black 15%, black 85%, transparent 100%)',
           maskComposite: 'intersect',
