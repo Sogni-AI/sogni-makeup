@@ -1,6 +1,8 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import Button from '@/components/common/Button';
+import { VenusIcon, MarsIcon } from './GenderIcons';
 
 const containerVariants = {
   hidden: {},
@@ -31,7 +33,14 @@ const sampleCategories = [
 ];
 
 function LandingHero() {
-  const { setCurrentView } = useApp();
+  const { setCurrentView, setSelectedGender } = useApp();
+  const [showGenderSelect, setShowGenderSelect] = useState(false);
+  const [hoveredGender, setHoveredGender] = useState<'female' | 'male' | null>(null);
+
+  const handleSelectGender = (gender: 'female' | 'male') => {
+    setSelectedGender(gender);
+    setCurrentView('capture');
+  };
 
   return (
     <section className="relative flex h-full flex-col overflow-hidden">
@@ -67,6 +76,15 @@ function LandingHero() {
             opacity: 0.7,
           }}
         />
+        <img
+          src="/images/before2.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-right transition-opacity duration-500 ease-in-out"
+          style={{
+            filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
+            opacity: hoveredGender === 'male' ? 0.7 : 0,
+          }}
+        />
       </motion.div>
 
       <motion.div
@@ -88,6 +106,15 @@ function LandingHero() {
           style={{
             filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
             opacity: 0.75,
+          }}
+        />
+        <img
+          src="/images/after2.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-left transition-opacity duration-500 ease-in-out"
+          style={{
+            filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
+            opacity: hoveredGender === 'male' ? 0.75 : 0,
           }}
         />
       </motion.div>
@@ -134,17 +161,66 @@ function LandingHero() {
           </motion.p>
 
           <motion.div variants={itemVariants} className="mt-10 flex flex-col items-center gap-4">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => setCurrentView('capture')}
-              className="text-lg shadow-xl shadow-primary-400/10"
-            >
-              Start Your Makeover
-            </Button>
-            <p className="text-sm font-light tracking-wide text-white/20">
-              No sign-up required &bull; Free to try
-            </p>
+            <AnimatePresence mode="wait">
+              {!showGenderSelect ? (
+                <motion.div
+                  key="start-button"
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
+                  className="flex flex-col items-center gap-4"
+                >
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={() => setShowGenderSelect(true)}
+                    className="text-lg shadow-xl shadow-primary-400/10"
+                  >
+                    Start Your Makeover
+                  </Button>
+                  <p className="text-sm font-light tracking-wide text-white/20">
+                    No sign-up required &bull; Free to try
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="gender-select"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                  className="flex items-center gap-8 sm:gap-12"
+                >
+                  {/* Female icon */}
+                  <motion.button
+                    initial={{ x: 30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1, transition: { delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.95 }}
+                    onHoverStart={() => setHoveredGender('female')}
+                    onHoverEnd={() => setHoveredGender(null)}
+                    onClick={() => handleSelectGender('female')}
+                    className="group relative flex h-20 w-20 items-center justify-center rounded-full border border-primary-400/20 bg-surface-900/60 backdrop-blur-sm transition-all duration-300 hover:border-primary-400/40 hover:bg-primary-400/[0.08] hover:shadow-lg hover:shadow-primary-400/10 sm:h-24 sm:w-24 cursor-pointer"
+                  >
+                    <VenusIcon className="h-10 w-10 text-white/50 transition-colors duration-300 group-hover:text-primary-300 sm:h-12 sm:w-12" />
+                  </motion.button>
+
+                  {/* Divider */}
+                  <div className="h-12 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+
+                  {/* Male icon */}
+                  <motion.button
+                    initial={{ x: -30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1, transition: { delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.95 }}
+                    onHoverStart={() => setHoveredGender('male')}
+                    onHoverEnd={() => setHoveredGender(null)}
+                    onClick={() => handleSelectGender('male')}
+                    className="group relative flex h-20 w-20 items-center justify-center rounded-full border border-primary-400/20 bg-surface-900/60 backdrop-blur-sm transition-all duration-300 hover:border-primary-400/40 hover:bg-primary-400/[0.08] hover:shadow-lg hover:shadow-primary-400/10 sm:h-24 sm:w-24 cursor-pointer"
+                  >
+                    <MarsIcon className="h-10 w-10 text-white/50 transition-colors duration-300 group-hover:text-primary-300 sm:h-12 sm:w-12" />
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
 
