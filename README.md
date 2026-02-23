@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://makeover.sogni.ai">
-    <img src="public/og-banner.png" alt="Sogni Makeover — Transform Your Look with AI" width="100%" />
+    <img src="public/og-banner-v2.jpg" alt="Sogni Makeover — Transform Your Look with AI" width="100%" />
   </a>
 </p>
 
