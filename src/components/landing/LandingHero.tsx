@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import type { Gender } from '@/types';
@@ -37,6 +37,19 @@ function LandingHero() {
   const { setCurrentView, setSelectedGender } = useApp();
   const [showGenderSelect, setShowGenderSelect] = useState(false);
   const [hoveredGender, setHoveredGender] = useState<Gender | null>(null);
+  const [activeTileIndex, setActiveTileIndex] = useState(0);
+  const [isTilesHovered, setIsTilesHovered] = useState(false);
+
+  useEffect(() => {
+    if (isTilesHovered) return;
+    const interval = setInterval(() => {
+      setActiveTileIndex((prev) => (prev + 1) % sampleCategories.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isTilesHovered]);
+
+  const handleTilesMouseEnter = useCallback(() => setIsTilesHovered(true), []);
+  const handleTilesMouseLeave = useCallback(() => setIsTilesHovered(false), []);
 
   const handleSelectGender = (gender: Gender) => {
     setSelectedGender(gender);
@@ -239,23 +252,39 @@ function LandingHero() {
           <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-white/20">
             Categories
           </p>
-          <div className="grid grid-cols-6 gap-3">
-            {sampleCategories.map((cat, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.08, y: -3 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                className="group flex aspect-square cursor-default flex-col items-center justify-center gap-1.5 rounded-xl border border-primary-400/[0.06] bg-surface-900/40 transition-all hover:border-primary-400/20 hover:bg-primary-400/[0.04]"
-              >
-                <span
-                  className="text-lg text-white/25 transition-colors group-hover:text-primary-300/60"
-                  dangerouslySetInnerHTML={{ __html: cat.icon }}
-                />
-                <span className="text-[9px] font-medium uppercase tracking-widest text-white/20 transition-colors group-hover:text-white/40">
-                  {cat.label}
-                </span>
-              </motion.div>
-            ))}
+          <div
+            className="grid grid-cols-6 gap-3"
+            onMouseEnter={handleTilesMouseEnter}
+            onMouseLeave={handleTilesMouseLeave}
+          >
+            {sampleCategories.map((cat, index) => {
+              const isActive = !isTilesHovered && activeTileIndex === index;
+              return (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.08, y: -3 }}
+                  animate={isActive ? { scale: 1.08, y: -3 } : { scale: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="group flex aspect-square cursor-default flex-col items-center justify-center gap-1.5 rounded-xl border bg-surface-900/40 transition-[border-color,background-color] duration-500 hover:border-primary-400/20 hover:bg-primary-400/[0.04]"
+                  style={{
+                    borderColor: isActive ? 'rgba(212, 163, 115, 0.2)' : 'rgba(212, 163, 115, 0.06)',
+                    backgroundColor: isActive ? 'rgba(212, 163, 115, 0.04)' : undefined,
+                  }}
+                >
+                  <span
+                    className="text-lg transition-colors duration-500 group-hover:text-primary-300/60"
+                    style={{ color: isActive ? 'rgba(232, 190, 126, 0.6)' : 'rgba(255,255,255,0.25)' }}
+                    dangerouslySetInnerHTML={{ __html: cat.icon }}
+                  />
+                  <span
+                    className="text-[9px] font-medium uppercase tracking-widest transition-colors duration-500 group-hover:text-white/40"
+                    style={{ color: isActive ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)' }}
+                  >
+                    {cat.label}
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </motion.div>
