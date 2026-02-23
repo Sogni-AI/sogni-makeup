@@ -119,7 +119,7 @@ function LandingHero() {
           </motion.h1>
 
           {/* Decorative line */}
-          <motion.div variants={itemVariants} className="mx-auto mt-6 flex items-center gap-3">
+          <motion.div variants={itemVariants} className="mx-auto mt-6 flex items-center justify-center gap-3">
             <div className="h-px w-12 bg-gradient-to-r from-transparent to-primary-400/30" />
             <div className="h-1.5 w-1.5 rotate-45 border border-primary-400/40" />
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-primary-400/30" />
