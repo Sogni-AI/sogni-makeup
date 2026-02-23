@@ -105,7 +105,7 @@ function PhotoUpload() {
         animate={{ opacity: 1, scale: 1 }}
         className="flex flex-col items-center"
       >
-        <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-black">
+        <div className="w-full max-w-md overflow-hidden rounded-2xl border border-primary-400/10 bg-surface-950 warm-glow">
           <img
             src={previewUrl}
             alt="Selected photo preview"
@@ -133,8 +133,8 @@ function PhotoUpload() {
         onClick={() => fileInputRef.current?.click()}
         className={`flex w-full max-w-md cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 transition-all ${
           isDragOver
-            ? 'border-rose-500/50 bg-rose-500/5'
-            : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+            ? 'border-primary-400/40 bg-primary-400/[0.04]'
+            : 'border-primary-400/[0.08] bg-surface-900/30 hover:border-primary-400/15 hover:bg-surface-900/50'
         }`}
         role="button"
         tabIndex={0}
@@ -145,23 +145,18 @@ function PhotoUpload() {
           }
         }}
       >
-        <svg
-          className={`h-12 w-12 transition-colors ${isDragOver ? 'text-rose-400' : 'text-white/20'}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={1}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21zm14.25-13.5a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0z"
-          />
-        </svg>
-        <p className="mt-4 text-sm font-medium text-white/60">
+        {/* Geometric upload icon */}
+        <div className={`relative transition-colors ${isDragOver ? 'text-primary-300' : 'text-white/15'}`}>
+          <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-current">
+            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+          </div>
+        </div>
+        <p className="mt-5 text-sm font-medium text-white/50">
           {isDragOver ? 'Drop your photo here' : 'Drop your photo here or click to browse'}
         </p>
-        <p className="mt-2 text-xs text-white/30">
+        <p className="mt-2 text-xs text-white/25">
           JPG, PNG, or WebP up to 10MB
         </p>
       </div>
@@ -178,7 +173,7 @@ function PhotoUpload() {
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 text-sm text-red-400"
+          className="mt-4 text-sm text-secondary-400"
         >
           {error}
         </motion.p>

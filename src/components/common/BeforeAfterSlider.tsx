@@ -127,22 +127,22 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
 
       {/* Divider line */}
       <div
-        className="absolute bottom-0 top-0 z-10 w-0.5 bg-white shadow-lg"
+        className="absolute bottom-0 top-0 z-10 w-px bg-primary-300/80 shadow-lg"
         style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
       >
         {/* Drag handle */}
-        <div className="absolute left-1/2 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-gray-900/80 shadow-xl backdrop-blur-sm">
-          <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="absolute left-1/2 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-primary-300/50 bg-surface-950/80 shadow-xl backdrop-blur-sm">
+          <svg className="h-5 w-5 text-primary-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
           </svg>
         </div>
       </div>
 
       {/* Labels */}
-      <div className="absolute bottom-3 left-3 z-10 rounded-lg bg-black/60 px-2.5 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+      <div className="absolute bottom-3 left-3 z-10 rounded-lg bg-surface-950/70 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm">
         Before
       </div>
-      <div className="absolute bottom-3 right-3 z-10 rounded-lg bg-black/60 px-2.5 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+      <div className="absolute bottom-3 right-3 z-10 rounded-lg bg-surface-950/70 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm">
         After
       </div>
     </div>

@@ -65,7 +65,7 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
         <div>
           <label
             htmlFor="login-username"
-            className="mb-1.5 block text-sm font-medium text-white/60"
+            className="mb-1.5 block text-sm font-medium text-white/50"
           >
             Username
           </label>
@@ -76,7 +76,7 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your username"
             autoComplete="username"
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-rose-500/30 focus:bg-white/[0.07]"
+            className="w-full rounded-xl border border-primary-400/[0.08] bg-surface-800/50 px-4 py-2.5 text-sm text-white placeholder-white/25 outline-none transition-colors focus:border-primary-400/25 focus:bg-surface-800/80"
             disabled={isLoading}
           />
         </div>
@@ -84,7 +84,7 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
         <div>
           <label
             htmlFor="login-password"
-            className="mb-1.5 block text-sm font-medium text-white/60"
+            className="mb-1.5 block text-sm font-medium text-white/50"
           >
             Password
           </label>
@@ -95,13 +95,13 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             autoComplete="current-password"
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-rose-500/30 focus:bg-white/[0.07]"
+            className="w-full rounded-xl border border-primary-400/[0.08] bg-surface-800/50 px-4 py-2.5 text-sm text-white placeholder-white/25 outline-none transition-colors focus:border-primary-400/25 focus:bg-surface-800/80"
             disabled={isLoading}
           />
         </div>
 
         {error && (
-          <div className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">
+          <div className="rounded-lg bg-secondary-500/8 px-3 py-2 text-sm text-secondary-400">
             {error}
           </div>
         )}
@@ -115,13 +115,13 @@ function LoginModal({ isOpen, onClose }: LoginModalProps) {
           Sign In
         </Button>
 
-        <p className="text-center text-xs text-white/30">
+        <p className="text-center text-xs text-white/25">
           Don&apos;t have an account?{' '}
           <a
             href="https://sogni.ai/signup"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-rose-400 transition-colors hover:text-rose-300"
+            className="text-primary-300 transition-colors hover:text-primary-200"
           >
             Sign up at sogni.ai
           </a>

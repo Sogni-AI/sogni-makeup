@@ -13,7 +13,7 @@ function AppContent() {
   const { currentView } = useApp();
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
+    <div className="grain-overlay flex h-dvh flex-col overflow-hidden bg-surface-950 text-white">
       <Header />
       <main className="min-h-0 flex-1 overflow-y-auto">
         {currentView === 'landing' && <LandingHero />}

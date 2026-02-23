@@ -5,8 +5,8 @@ type ConnectionState = 'connected' | 'reconnecting' | 'disconnected';
 
 const statusConfig: Record<ConnectionState, { color: string; label: string }> = {
   connected: { color: 'bg-emerald-400', label: 'Connected' },
-  reconnecting: { color: 'bg-amber-400', label: 'Reconnecting...' },
-  disconnected: { color: 'bg-red-400', label: 'Disconnected' },
+  reconnecting: { color: 'bg-primary-300', label: 'Reconnecting...' },
+  disconnected: { color: 'bg-secondary-400', label: 'Disconnected' },
 };
 
 function NetworkStatus() {
@@ -38,10 +38,10 @@ function NetworkStatus() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.9 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-white/10 bg-gray-900/90 px-4 py-2 shadow-xl backdrop-blur-sm"
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-primary-400/10 bg-surface-900/90 px-4 py-2 shadow-xl backdrop-blur-sm"
         >
           <span className={`h-2 w-2 rounded-full ${config.color} ${status === 'reconnecting' ? 'animate-pulse' : ''}`} />
-          <span className="text-xs font-medium text-white/70">
+          <span className="text-xs font-medium text-white/60">
             {config.label}
           </span>
         </motion.div>

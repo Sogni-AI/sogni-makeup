@@ -15,15 +15,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-r from-rose-500 to-rose-600 text-white shadow-lg shadow-rose-500/25 hover:from-rose-600 hover:to-rose-700 focus-visible:ring-rose-500',
+    'bg-gradient-to-r from-primary-400 to-primary-500 text-surface-950 shadow-lg shadow-primary-400/15 hover:from-primary-300 hover:to-primary-400 focus-visible:ring-primary-400',
   secondary:
-    'bg-gray-700 text-white hover:bg-gray-600 focus-visible:ring-gray-500',
+    'bg-surface-800 text-white/80 hover:bg-surface-700 focus-visible:ring-surface-500',
   outline:
-    'border border-white/10 bg-transparent text-white hover:bg-white/5 focus-visible:ring-white/30',
+    'border border-primary-400/15 bg-transparent text-white/70 hover:bg-primary-400/[0.06] hover:text-white hover:border-primary-400/25 focus-visible:ring-primary-400/30',
   ghost:
-    'bg-transparent text-white/70 hover:bg-white/5 hover:text-white focus-visible:ring-white/20',
+    'bg-transparent text-white/60 hover:bg-primary-400/[0.06] hover:text-white focus-visible:ring-white/20',
   danger:
-    'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
+    'bg-secondary-500 text-white hover:bg-secondary-600 focus-visible:ring-secondary-400',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -59,8 +59,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         whileTap={isDisabled ? undefined : { scale: 0.98 }}
         disabled={isDisabled}
         className={[
-          'inline-flex items-center justify-center font-medium transition-all duration-200',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
+          'inline-flex items-center justify-center font-medium tracking-wide transition-all duration-200',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-950',
           variantStyles[variant],
           sizeStyles[size],
           fullWidth ? 'w-full' : '',

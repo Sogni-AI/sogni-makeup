@@ -19,16 +19,16 @@ function ProgressBar({
 
   return (
     <div className={`w-full ${className}`}>
-      <div className="relative h-2 w-full overflow-hidden rounded-full bg-white/5">
+      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-primary-400/[0.06]">
         <motion.div
-          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 to-purple-500"
+          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary-400 to-primary-300"
           initial={{ width: 0 }}
           animate={{ width: `${clampedProgress}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
         />
         {clampedProgress > 0 && clampedProgress < 100 && (
           <motion.div
-            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-400/50 to-purple-400/50"
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary-300/40 to-primary-200/20"
             animate={{
               width: [`${clampedProgress}%`, `${Math.min(100, clampedProgress + 5)}%`],
               opacity: [0.5, 0],
@@ -45,14 +45,14 @@ function ProgressBar({
       <div className="mt-2 flex items-center justify-between gap-2">
         <div className="min-w-0 flex-1">
           {status && (
-            <p className="text-xs font-medium text-white/70">{status}</p>
+            <p className="text-xs font-medium text-white/60">{status}</p>
           )}
           {message && (
-            <p className="truncate text-xs text-white/40">{message}</p>
+            <p className="truncate text-xs text-white/35">{message}</p>
           )}
         </div>
         {showPercentage && (
-          <span className="flex-shrink-0 text-xs font-medium tabular-nums text-white/50">
+          <span className="flex-shrink-0 text-xs font-medium tabular-nums text-white/40">
             {Math.round(clampedProgress)}%
           </span>
         )}

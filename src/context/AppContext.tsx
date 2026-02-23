@@ -462,7 +462,14 @@ export function AppProvider({ children }: AppProviderProps) {
 
           const onFailed = (error: any) => {
             if (abortController.signal.aborted) return;
-            const msg = typeof error === 'string' ? error : error?.message || 'Generation failed';
+            let msg = 'Generation failed';
+            if (typeof error === 'string') {
+              msg = error;
+            } else if (error instanceof Error) {
+              msg = error.message;
+            } else if (error && typeof error === 'object' && typeof error.message === 'string') {
+              msg = error.message;
+            }
             setGenerationProgress({
               projectId,
               status: 'error',
@@ -789,7 +796,14 @@ export function AppProvider({ children }: AppProviderProps) {
           return;
         }
 
-        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+        let errorMessage = 'An unexpected error occurred';
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (err && typeof err === 'object' && 'message' in err && typeof (err as Record<string, unknown>).message === 'string') {
+          errorMessage = (err as Record<string, string>).message;
+        } else if (typeof err === 'string') {
+          errorMessage = err;
+        }
         setGenerationProgress({
           projectId: '',
           status: 'error',

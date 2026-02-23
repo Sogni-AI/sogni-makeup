@@ -13,20 +13,24 @@ function Header() {
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="sticky top-0 z-50 w-full border-b border-white/5 bg-gray-950/80 backdrop-blur-xl"
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        className="sticky top-0 z-50 w-full border-b border-primary-400/[0.06] bg-surface-950/80 backdrop-blur-xl"
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => setCurrentView('landing')}
-            className="flex items-center gap-2 transition-opacity hover:opacity-80"
+            className="group flex items-center gap-2.5 transition-opacity hover:opacity-80"
           >
-            <span className="text-xl">&#10024;</span>
-            <span className="text-lg font-semibold tracking-tight">
-              <span className="bg-gradient-to-r from-rose-400 to-purple-400 bg-clip-text text-transparent">
+            {/* Geometric diamond logo mark */}
+            <div className="relative flex h-8 w-8 items-center justify-center">
+              <div className="absolute h-5 w-5 rotate-45 border border-primary-400/40 transition-colors group-hover:border-primary-400/70" />
+              <div className="absolute h-2.5 w-2.5 rotate-45 bg-primary-400/60 transition-colors group-hover:bg-primary-400" />
+            </div>
+            <span className="text-lg tracking-wide">
+              <span className="font-display text-xl font-semibold text-primary-300">
                 Sogni
               </span>{' '}
-              <span className="text-white/90">Makeover</span>
+              <span className="font-light text-white/60">Makeover</span>
             </span>
           </button>
 
@@ -36,7 +40,7 @@ function Header() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 onClick={() => setCurrentView('landing')}
-                className="text-sm text-white/50 transition-colors hover:text-white/80"
+                className="text-sm text-white/40 transition-colors hover:text-primary-300"
               >
                 Home
               </motion.button>
@@ -44,7 +48,7 @@ function Header() {
 
             {authState.isAuthenticated && authState.user ? (
               <div className="flex items-center gap-3">
-                <span className="text-sm text-white/60">
+                <span className="text-sm text-white/50">
                   {authState.user.username}
                 </span>
               </div>

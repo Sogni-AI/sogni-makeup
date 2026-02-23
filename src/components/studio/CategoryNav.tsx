@@ -20,8 +20,8 @@ function CategoryNav({ selectedCategory, onSelectCategory }: CategoryNavProps) {
             onClick={() => onSelectCategory(key)}
             className={`relative flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-center transition-all md:px-3 ${
               isActive
-                ? 'bg-rose-500/10 text-rose-400'
-                : 'text-white/40 hover:bg-white/5 hover:text-white/60'
+                ? 'bg-primary-400/8 text-primary-300'
+                : 'text-white/35 hover:bg-primary-400/[0.04] hover:text-white/50'
             }`}
             aria-label={category.name}
             aria-current={isActive ? 'true' : undefined}
@@ -29,7 +29,7 @@ function CategoryNav({ selectedCategory, onSelectCategory }: CategoryNavProps) {
             {isActive && (
               <motion.div
                 layoutId="category-highlight"
-                className="absolute inset-0 rounded-xl border border-rose-500/20 bg-rose-500/5"
+                className="absolute inset-0 rounded-xl border border-primary-400/15 bg-primary-400/[0.04]"
                 transition={{ duration: 0.25, ease: 'easeInOut' }}
               />
             )}

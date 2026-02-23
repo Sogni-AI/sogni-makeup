@@ -52,8 +52,8 @@ function TransformationPicker({
               onClick={() => onSelectSubcategory(sub.id)}
               className={`relative flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                 isActive
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/40 hover:bg-white/5 hover:text-white/60'
+                  ? 'bg-primary-400/10 text-primary-300'
+                  : 'text-white/35 hover:bg-primary-400/[0.04] hover:text-white/50'
               }`}
             >
               <span className="mr-1">{sub.icon}</span>
@@ -95,7 +95,7 @@ function TransformationPicker({
           </motion.div>
         ) : (
           <div className="flex items-center justify-center p-12">
-            <p className="text-sm text-white/30">
+            <p className="text-sm text-white/25">
               No transformations available for this subcategory.
             </p>
           </div>

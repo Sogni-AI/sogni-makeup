@@ -60,7 +60,7 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
             animate="visible"
             exit="hidden"
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-surface-950/70 backdrop-blur-sm"
             onClick={onClose}
           />
 
@@ -69,16 +69,16 @@ function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-            className={`relative w-full ${sizeClasses[size]} rounded-2xl border border-white/10 bg-gray-900 p-6 shadow-2xl`}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className={`relative w-full ${sizeClasses[size]} rounded-2xl border border-primary-400/[0.08] bg-surface-900 p-6 shadow-2xl`}
             onClick={(e) => e.stopPropagation()}
           >
             {title && (
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">{title}</h2>
+                <h2 className="font-display text-xl font-medium text-white/90">{title}</h2>
                 <button
                   onClick={onClose}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 transition-colors hover:bg-white/5 hover:text-white/70"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 transition-colors hover:bg-primary-400/[0.06] hover:text-white/60"
                   aria-label="Close modal"
                 >
                   <svg

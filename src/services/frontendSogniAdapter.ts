@@ -79,7 +79,19 @@ export class FrontendProjectAdapter extends BrowserEventEmitter {
   waitForCompletion(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const onComplete = () => { this.off('completed', onComplete); this.off('failed', onFail); resolve(); };
-      const onFail = (err: unknown) => { this.off('completed', onComplete); this.off('failed', onFail); reject(err instanceof Error ? err : new Error(String(err))); };
+      const onFail = (err: unknown) => {
+        this.off('completed', onComplete);
+        this.off('failed', onFail);
+        if (err instanceof Error) {
+          reject(err);
+        } else if (err && typeof err === 'object' && 'message' in err) {
+          reject(new Error((err as { message: string }).message));
+        } else if (typeof err === 'string') {
+          reject(new Error(err));
+        } else {
+          reject(new Error('Generation failed'));
+        }
+      };
       this.on('completed', onComplete);
       this.on('failed', onFail);
     });

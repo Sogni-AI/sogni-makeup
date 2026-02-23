@@ -21,13 +21,14 @@ function PhotoCapture() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="text-center"
       >
-        <h1 className="text-2xl font-bold sm:text-3xl">
-          Take or upload a photo to get started
+        <h1 className="font-display text-3xl font-medium tracking-tight sm:text-4xl">
+          <span className="text-white/90">Begin Your </span>
+          <span className="font-display italic text-primary-300">Transformation</span>
         </h1>
-        <p className="mt-1 text-sm text-white/40">
+        <p className="mt-2 text-sm font-light text-white/35">
           Use your camera or upload an existing photo
         </p>
       </motion.div>
@@ -37,15 +38,15 @@ function PhotoCapture() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="mt-4 flex justify-center"
+        className="mt-5 flex justify-center"
       >
-        <div className="inline-flex rounded-xl border border-white/10 bg-white/5 p-1">
+        <div className="inline-flex rounded-xl border border-primary-400/[0.08] bg-surface-900/50 p-1">
           <button
             onClick={() => setActiveTab('camera')}
             className={`flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-medium transition-all ${
               activeTab === 'camera'
-                ? 'bg-white/10 text-white shadow-sm'
-                : 'text-white/50 hover:text-white/70'
+                ? 'bg-primary-400/10 text-primary-300 shadow-sm'
+                : 'text-white/40 hover:text-white/60'
             }`}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -58,8 +59,8 @@ function PhotoCapture() {
             onClick={() => setActiveTab('upload')}
             className={`flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-medium transition-all ${
               activeTab === 'upload'
-                ? 'bg-white/10 text-white shadow-sm'
-                : 'text-white/50 hover:text-white/70'
+                ? 'bg-primary-400/10 text-primary-300 shadow-sm'
+                : 'text-white/40 hover:text-white/60'
             }`}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -76,7 +77,7 @@ function PhotoCapture() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mt-4"
+        className="mt-5"
       >
         {activeTab === 'camera' ? <CameraView /> : <PhotoUpload />}
       </motion.div>

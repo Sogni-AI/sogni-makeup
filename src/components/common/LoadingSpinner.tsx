@@ -16,12 +16,12 @@ function LoadingSpinner({ size = 'md', label, className = '' }: LoadingSpinnerPr
   return (
     <div className={`flex flex-col items-center gap-3 ${className}`}>
       <div
-        className={`animate-spin rounded-full border-rose-500/20 border-t-rose-500 ${sizeClasses[size]}`}
+        className={`animate-spin rounded-full border-primary-400/20 border-t-primary-400 ${sizeClasses[size]}`}
         role="status"
         aria-label={label || 'Loading'}
       />
       {label && (
-        <p className="text-sm text-white/50">{label}</p>
+        <p className="text-sm text-white/40">{label}</p>
       )}
     </div>
   );

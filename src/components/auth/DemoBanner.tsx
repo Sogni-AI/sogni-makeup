@@ -24,18 +24,18 @@ function DemoBanner({ generationsRemaining }: DemoBannerProps) {
             transition={{ duration: 0.3 }}
             className={`mb-3 overflow-hidden rounded-xl border ${
               isLimitReached
-                ? 'border-amber-500/20 bg-amber-500/5'
-                : 'border-white/10 bg-white/5'
+                ? 'border-primary-400/20 bg-primary-400/[0.04]'
+                : 'border-primary-400/[0.06] bg-surface-900/40'
             }`}
           >
             <div className="flex items-center justify-between px-4 py-2">
-              <p className="text-xs text-white/50 sm:text-sm">
+              <p className="text-xs text-white/45 sm:text-sm">
                 {isLimitReached ? (
                   <>Sign in to continue creating makeovers</>
                 ) : (
                   <>
                     You have{' '}
-                    <span className="font-semibold text-rose-400">
+                    <span className="font-semibold text-primary-300">
                       {generationsRemaining}
                     </span>{' '}
                     free {generationsRemaining === 1 ? 'makeover' : 'makeovers'} remaining.{' '}
@@ -55,7 +55,7 @@ function DemoBanner({ generationsRemaining }: DemoBannerProps) {
                 {!isLimitReached && (
                   <button
                     onClick={() => setIsDismissed(true)}
-                    className="flex h-6 w-6 items-center justify-center rounded-md text-white/20 transition-colors hover:bg-white/5 hover:text-white/40"
+                    className="flex h-6 w-6 items-center justify-center rounded-md text-white/15 transition-colors hover:bg-white/5 hover:text-white/30"
                     aria-label="Dismiss banner"
                   >
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

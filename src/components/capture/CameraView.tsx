@@ -188,12 +188,12 @@ function CameraView() {
 
   if (cameraState === 'denied') {
     return (
-      <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-        <svg className="h-12 w-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <div className="flex flex-col items-center rounded-2xl border border-primary-400/[0.08] bg-surface-900/40 p-8 text-center">
+        <svg className="h-12 w-12 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
         </svg>
-        <h3 className="mt-4 text-lg font-medium">Camera Access Denied</h3>
-        <p className="mt-2 text-sm text-white/40">
+        <h3 className="mt-4 font-display text-lg font-medium">Camera Access Denied</h3>
+        <p className="mt-2 text-sm text-white/35">
           Please allow camera access in your browser settings, or try uploading a photo instead.
         </p>
       </div>
@@ -202,12 +202,12 @@ function CameraView() {
 
   if (cameraState === 'error') {
     return (
-      <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-        <svg className="h-12 w-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <div className="flex flex-col items-center rounded-2xl border border-primary-400/[0.08] bg-surface-900/40 p-8 text-center">
+        <svg className="h-12 w-12 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
         </svg>
-        <h3 className="mt-4 text-lg font-medium">Camera Unavailable</h3>
-        <p className="mt-2 text-sm text-white/40">
+        <h3 className="mt-4 font-display text-lg font-medium">Camera Unavailable</h3>
+        <p className="mt-2 text-sm text-white/35">
           Your device camera could not be accessed. Please try uploading a photo instead.
         </p>
       </div>
@@ -216,7 +216,7 @@ function CameraView() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-black">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-primary-400/10 bg-surface-950">
         {cameraState === 'captured' && capturedImage ? (
           <motion.img
             initial={{ opacity: 0 }}
@@ -235,10 +235,10 @@ function CameraView() {
               className={`aspect-square w-full object-cover ${facingMode === 'user' ? 'camera-mirror' : ''}`}
             />
             {cameraState === 'requesting' && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+              <div className="absolute inset-0 flex items-center justify-center bg-surface-950">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-rose-500/20 border-t-rose-500" />
-                  <p className="text-sm text-white/40">Starting camera...</p>
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-400/20 border-t-primary-400" />
+                  <p className="text-sm text-white/35">Starting camera...</p>
                 </div>
               </div>
             )}
@@ -269,7 +269,7 @@ function CameraView() {
             <button
               onClick={capturePhoto}
               disabled={cameraState !== 'active'}
-              className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/30 bg-white transition-all hover:scale-105 hover:border-white/50 active:scale-95 disabled:opacity-30"
+              className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-primary-400/25 bg-white transition-all hover:scale-105 hover:border-primary-400/50 active:scale-95 disabled:opacity-30"
               aria-label="Capture photo"
             >
               <div className="h-12 w-12 rounded-full bg-white" />

@@ -107,12 +107,12 @@ function MakeoverStudio() {
           </div>
 
           {/* Transformation picker */}
-          <div className="flex min-h-0 flex-col overflow-hidden border-t border-white/5">
+          <div className="flex min-h-0 flex-col overflow-hidden border-t border-primary-400/[0.06]">
             {/* Toolbar */}
-            <div className="flex flex-shrink-0 items-center gap-2 border-b border-white/5 px-3 py-1.5">
+            <div className="flex flex-shrink-0 items-center gap-2 border-b border-primary-400/[0.06] px-3 py-1.5">
               <button
                 onClick={handleBack}
-                className="flex items-center gap-1 text-xs text-white/40 transition-colors hover:text-white/70"
+                className="flex items-center gap-1 text-xs text-white/35 transition-colors hover:text-white/60"
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
@@ -121,8 +121,8 @@ function MakeoverStudio() {
               </button>
               {currentTransformation && (
                 <>
-                  <span className="text-[10px] text-white/15">|</span>
-                  <span className="text-[11px] text-rose-400/80">
+                  <span className="text-[10px] text-white/10">|</span>
+                  <span className="text-[11px] text-primary-300/70">
                     {currentTransformation.icon} {currentTransformation.name}
                   </span>
                 </>
