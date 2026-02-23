@@ -9,7 +9,45 @@ interface BeforeAfterSliderProps {
 function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [displaySize, setDisplaySize] = useState<{ width: number; height: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const naturalSizeRef = useRef<{ width: number; height: number } | null>(null);
+
+  // Compute display size that fits within parent while maintaining aspect ratio
+  const computeDisplaySize = useCallback(() => {
+    const el = containerRef.current;
+    const parent = el?.parentElement;
+    const nat = naturalSizeRef.current;
+    if (!parent || !nat) return;
+
+    const cs = getComputedStyle(parent);
+    const availW = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const availH = parent.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const isDesktop = availW >= 768;
+    const scale = Math.min(availW / nat.width, availH / nat.height, 1) * (isDesktop ? 0.90 : 1);
+
+    setDisplaySize({
+      width: Math.round(nat.width * scale),
+      height: Math.round(nat.height * scale),
+    });
+  }, []);
+
+  // Recompute on parent resize
+  useEffect(() => {
+    const parent = containerRef.current?.parentElement;
+    if (!parent) return;
+
+    const observer = new ResizeObserver(() => computeDisplaySize());
+    observer.observe(parent);
+    return () => observer.disconnect();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Capture natural image dimensions on load
+  const handleAfterImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    naturalSizeRef.current = { width: img.naturalWidth, height: img.naturalHeight };
+    computeDisplaySize();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updatePosition = useCallback((clientX: number) => {
     const container = containerRef.current;
@@ -71,8 +109,11 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
   return (
     <div
       ref={containerRef}
-      className={`relative w-full cursor-col-resize select-none overflow-hidden rounded-2xl ${className}`}
-      style={{ touchAction: 'none' }}
+      className={`relative cursor-col-resize select-none overflow-hidden rounded-2xl ${className}`}
+      style={{
+        touchAction: 'none',
+        ...(displaySize ? { width: displaySize.width, height: displaySize.height } : {}),
+      }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       role="slider"
@@ -86,19 +127,20 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
         if (e.key === 'ArrowRight') setSliderPosition((p) => Math.min(100, p + 2));
       }}
     >
-      {/* After image (full width — sets natural aspect ratio) */}
+      {/* After image (fills computed container) */}
       <img
         src={afterImage}
         alt="After transformation"
-        className="block w-full"
+        className="block h-full w-full"
+        onLoad={handleAfterImageLoad}
         draggable={false}
       />
 
-      {/* Before image (clipped overlay using clip-path — same sizing as after) */}
+      {/* Before image (clipped overlay — same size as after) */}
       <img
         src={beforeImage}
         alt="Before transformation"
-        className="absolute inset-0 block w-full"
+        className="absolute inset-0 block h-full w-full"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
         draggable={false}
       />
