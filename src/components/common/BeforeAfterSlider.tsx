@@ -9,24 +9,7 @@ interface BeforeAfterSliderProps {
 function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Track container width for the before image sizing
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
-      }
-    });
-    observer.observe(el);
-    setContainerWidth(el.offsetWidth);
-
-    return () => observer.disconnect();
-  }, []);
 
   const updatePosition = useCallback((clientX: number) => {
     const container = containerRef.current;
@@ -111,19 +94,14 @@ function BeforeAfterSlider({ beforeImage, afterImage, className = '' }: BeforeAf
         draggable={false}
       />
 
-      {/* Before image (clipped overlay — image stays full container width) */}
-      <div
-        className="absolute inset-y-0 left-0 overflow-hidden"
-        style={{ width: `${sliderPosition}%` }}
-      >
-        <img
-          src={beforeImage}
-          alt="Before transformation"
-          className="block h-full max-w-none"
-          style={{ width: containerWidth > 0 ? `${containerWidth}px` : '100%' }}
-          draggable={false}
-        />
-      </div>
+      {/* Before image (clipped overlay using clip-path — same sizing as after) */}
+      <img
+        src={beforeImage}
+        alt="Before transformation"
+        className="absolute inset-0 block w-full"
+        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+        draggable={false}
+      />
 
       {/* Divider line */}
       <div
