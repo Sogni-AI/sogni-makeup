@@ -71,19 +71,21 @@ function LandingHero() {
         <img
           src="/images/before.png"
           alt=""
-          className="h-full w-full object-cover object-right transition-opacity duration-500 ease-in-out"
+          className="h-full w-full object-cover object-right transition-[opacity,transform] duration-700 ease-in-out"
           style={{
             filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
             opacity: hoveredGender === 'male' ? 0 : 0.7,
+            transform: hoveredGender === 'male' ? 'translateX(-20px)' : 'translateX(0)',
           }}
         />
         <img
           src="/images/before2.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-right transition-opacity duration-500 ease-in-out"
+          className="absolute inset-0 h-full w-full object-cover object-right transition-[opacity,transform] duration-700 ease-in-out"
           style={{
             filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
             opacity: hoveredGender === 'male' ? 0.7 : 0,
+            transform: hoveredGender === 'male' ? 'translateX(0)' : 'translateX(-20px)',
           }}
         />
       </motion.div>
@@ -103,19 +105,21 @@ function LandingHero() {
         <img
           src="/images/after.png"
           alt=""
-          className="h-full w-full object-cover object-left transition-opacity duration-500 ease-in-out"
+          className="h-full w-full object-cover object-left transition-[opacity,transform] duration-700 ease-in-out"
           style={{
             filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
             opacity: hoveredGender === 'male' ? 0 : 0.75,
+            transform: hoveredGender === 'male' ? 'translateX(20px)' : 'translateX(0)',
           }}
         />
         <img
           src="/images/after2.png"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover object-left transition-opacity duration-500 ease-in-out"
+          className="absolute inset-0 h-full w-full object-cover object-left transition-[opacity,transform] duration-700 ease-in-out"
           style={{
             filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
             opacity: hoveredGender === 'male' ? 0.75 : 0,
+            transform: hoveredGender === 'male' ? 'translateX(0)' : 'translateX(20px)',
           }}
         />
       </motion.div>
