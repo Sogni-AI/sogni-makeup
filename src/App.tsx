@@ -6,6 +6,7 @@ import LandingHero from '@/components/landing/LandingHero';
 import PhotoCapture from '@/components/capture/PhotoCapture';
 import MakeoverStudio from '@/components/studio/MakeoverStudio';
 import ComparisonView from '@/components/results/ComparisonView';
+import HistoryView from '@/components/history/HistoryView';
 import Toast from '@/components/common/Toast';
 import './App.css';
 
@@ -20,6 +21,7 @@ function AppContent() {
         {currentView === 'capture' && <PhotoCapture />}
         {currentView === 'studio' && <MakeoverStudio />}
         {currentView === 'results' && <ComparisonView />}
+        {currentView === 'history' && <HistoryView />}
       </main>
       {(currentView === 'landing') && <Footer />}
       <Toast />
