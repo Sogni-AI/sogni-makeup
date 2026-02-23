@@ -71,10 +71,10 @@ function LandingHero() {
         <img
           src="/images/before.png"
           alt=""
-          className="h-full w-full object-cover object-right"
+          className="h-full w-full object-cover object-right transition-opacity duration-500 ease-in-out"
           style={{
             filter: 'sepia(0.15) saturate(0.85) brightness(0.9)',
-            opacity: 0.7,
+            opacity: hoveredGender === 'male' ? 0 : 0.7,
           }}
         />
         <img
@@ -103,10 +103,10 @@ function LandingHero() {
         <img
           src="/images/after.png"
           alt=""
-          className="h-full w-full object-cover object-left"
+          className="h-full w-full object-cover object-left transition-opacity duration-500 ease-in-out"
           style={{
             filter: 'sepia(0.08) saturate(1.0) brightness(0.9)',
-            opacity: 0.75,
+            opacity: hoveredGender === 'male' ? 0 : 0.75,
           }}
         />
         <img
