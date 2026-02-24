@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import Turnstile from 'react-turnstile';
 import { getTurnstileKey } from '@/config/env';
 import ConfettiCelebration from './ConfettiCelebration';
@@ -17,6 +18,45 @@ interface DailyBoostCelebrationProps {
   claimError: string | null;
 }
 
+const backdropVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+const modalVariants = {
+  hidden: { opacity: 0, scale: 0.92, y: 24 },
+  visible: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 0.95, y: 12 },
+};
+
+const contentVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const GiftIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 12v10H4V12" />
+    <path d="M2 7h20v5H2z" />
+    <path d="M12 22V7" />
+    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+  </svg>
+);
+
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 6 9 17l-5-5" />
+  </svg>
+);
+
+const SparkleIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z" />
+  </svg>
+);
+
 const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
   isVisible,
   creditAmount,
@@ -30,7 +70,6 @@ const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
   const [showTurnstile, setShowTurnstile] = useState(false);
   const [displayedCredits, setDisplayedCredits] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const autoCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const counterIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasHandledSuccessRef = useRef(false);
@@ -46,7 +85,6 @@ const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
       setShowTurnstile(false);
       setDisplayedCredits(0);
       setShowConfetti(false);
-      setIsClosing(false);
       hasHandledSuccessRef.current = false;
     }
   }, [isVisible]);
@@ -63,16 +101,13 @@ const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
     if (!claimError) return;
 
     const errorTimeout = setTimeout(() => {
-      setIsClosing(true);
-      setTimeout(() => {
-        onDismissRef.current();
-      }, 300);
-    }, 500);
+      onDismissRef.current();
+    }, 800);
 
     return () => clearTimeout(errorTimeout);
   }, [claimError]);
 
-  // Handle successful claim - use ref to prevent re-running
+  // Handle successful claim
   useEffect(() => {
     if (!claimSuccess || hasHandledSuccessRef.current) return;
 
@@ -82,7 +117,7 @@ const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
     setShowConfetti(true);
     setDisplayedCredits(amount);
 
-    // Animate the credit counter from a slight offset for effect
+    // Animate the credit counter
     const duration = 800;
     const steps = 16;
     const startValue = Math.max(0, amount - 15);
@@ -104,12 +139,9 @@ const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
       }
     }, duration / steps);
 
-    // Auto-close after 2.5 seconds with fade out animation
+    // Auto-close after 2.5 seconds
     autoCloseTimeoutRef.current = setTimeout(() => {
-      setIsClosing(true);
-      setTimeout(() => {
-        onDismissRef.current();
-      }, 400);
+      onDismissRef.current();
     }, 2500);
   }, [claimSuccess]);
 
@@ -138,165 +170,229 @@ const DailyBoostCelebration: React.FC<DailyBoostCelebrationProps> = ({
     if (autoCloseTimeoutRef.current) {
       clearTimeout(autoCloseTimeoutRef.current);
     }
-    setIsClosing(true);
-    setTimeout(() => {
-      onDismiss();
-    }, 300);
+    onDismiss();
   }, [onDismiss]);
 
-  // Handle backdrop click
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget && state === 'idle' && !showTurnstile) {
       handleDismiss();
     }
   }, [state, showTurnstile, handleDismiss]);
 
-  if (!isVisible) return null;
-
   const modalContent = (
     <>
-      {/* Confetti - render outside modal for full-screen effect */}
       <ConfettiCelebration isVisible={showConfetti} />
 
-      {/* Modal backdrop */}
-      <div
-        className={`daily-boost-backdrop ${isClosing ? 'closing' : ''}`}
-        onClick={handleBackdropClick}
-      >
-        {/* Modal content */}
-        <div className={`daily-boost-modal ${state} ${isClosing ? 'closing' : ''}`}>
-          {/* FREE badge */}
-          <div className="free-badge">
-            <span>FREE!</span>
-          </div>
+      <AnimatePresence>
+        {isVisible && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-5">
+            {/* Backdrop */}
+            <motion.div
+              variants={backdropVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 bg-surface-950/80 backdrop-blur-md"
+              onClick={handleBackdropClick}
+            />
 
-          {/* Corner decorations */}
-          <div className="corner-deco corner-tl">🌸</div>
-          <div className="corner-deco corner-tr">🌸</div>
-          <div className="corner-deco corner-bl">🌸</div>
-          <div className="corner-deco corner-br">🌸</div>
-
-          {/* Sparkles background */}
-          <div className="sparkle-container">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className={`sparkle sparkle-${i + 1}`} />
-            ))}
-          </div>
-
-          {/* Header */}
-          <div className="daily-boost-header">
-            <span className="sparkle-emoji">✨</span>
-            <span className="header-text">DAILY BOOST</span>
-            <span className="sparkle-emoji">✨</span>
-          </div>
-
-          {/* Cute subheader */}
-          <div className="cute-subheader">
-            {state === 'success' ? '🎊 Yay! You got it! 🎊' : '🎀 Your daily gift awaits! 🎀'}
-          </div>
-
-          {/* Gift icon with animation */}
-          <div className={`gift-container ${state}`}>
-            {state === 'success' ? (
-              <div className="gift-opened">
-                <div className="gift-burst">
-                  {[...Array(12)].map((_, i) => (
-                    <div key={i} className={`burst-particle burst-${i + 1}`} />
-                  ))}
-                </div>
-                <span className="gift-emoji opened">🎉</span>
-                <div className="success-hearts">
-                  <span className="heart heart-1">💖</span>
-                  <span className="heart heart-2">💕</span>
-                  <span className="heart heart-3">💗</span>
-                  <span className="heart heart-4">💖</span>
-                  <span className="heart heart-5">💕</span>
-                </div>
-              </div>
-            ) : (
-              <>
-                <span className={`gift-emoji ${state === 'claiming' ? 'shaking' : 'bouncing'}`}>🎁</span>
-                <div className="gift-sparkles">
-                  <span className="gift-spark spark-1">✨</span>
-                  <span className="gift-spark spark-2">💫</span>
-                  <span className="gift-spark spark-3">⭐</span>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Credit amount display */}
-          <div className="credit-display">
-            {state === 'success' ? (
-              <div className="credit-earned">
-                <span className="plus-sign">+</span>
-                <span className="credit-counter">{displayedCredits}</span>
-                <span className="credit-label">CREDITS</span>
-                <span className="credit-emoji">🌟</span>
-              </div>
-            ) : (
-              <div className="credit-preview">
-                <span className="plus-sign">+</span>
-                <span className="credit-amount">{creditAmount}</span>
-                <span className="credit-label">CREDITS</span>
-                <span className="credit-emoji">🌟</span>
-              </div>
-            )}
-          </div>
-
-          {/* Claim button or turnstile */}
-          {state === 'idle' && !showTurnstile && (
-            <button
-              className="claim-button"
-              onClick={handleClaimClick}
+            {/* Modal */}
+            <motion.div
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-[360px] overflow-hidden rounded-2xl border border-primary-400/[0.08] bg-surface-900 p-8 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
             >
-              <span className="btn-emoji">🎁</span>
-              CLAIM NOW!
-              <span className="btn-emoji">🎁</span>
-            </button>
-          )}
+              {/* Floating sparkle particles */}
+              <div className="absolute inset-0 pointer-events-none">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="daily-boost-sparkle" />
+                ))}
+              </div>
 
-          {/* Turnstile verification */}
-          {showTurnstile && state === 'idle' && (
-            <div className="turnstile-container">
-              <div className="turnstile-label">✨ Quick verification ✨</div>
-              <Turnstile
-                sitekey={getTurnstileKey()}
-                onVerify={handleTurnstileVerify}
-              />
-            </div>
-          )}
+              {/* Deco line top */}
+              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary-400/30 to-transparent" />
 
-          {/* Claiming state */}
-          {state === 'claiming' && (
-            <div className="claiming-indicator">
-              <div className="spinner" />
-              <span>Opening your gift... 🎁</span>
-            </div>
-          )}
+              {/* Header */}
+              <motion.div
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.1, duration: 0.4 }}
+                className="text-center mb-2"
+              >
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary-400/60 mb-1">
+                  Daily Reward
+                </p>
+                <h2 className="font-display text-2xl font-medium gradient-text">
+                  Daily Boost
+                </h2>
+              </motion.div>
 
-          {/* Success state */}
-          {state === 'success' && (
-            <div className="success-message">
-              <span>Woohoo! 🎉</span>
-            </div>
-          )}
+              {/* Subtitle */}
+              <motion.p
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.15, duration: 0.4 }}
+                className="text-center text-sm text-white/40 mb-6"
+              >
+                {state === 'success'
+                  ? 'Credits added to your account'
+                  : 'Your free daily credits are ready'}
+              </motion.p>
 
-          {/* Dismiss link - only show when not claimed yet */}
-          {state === 'idle' && !showTurnstile && (
-            <button
-              className="dismiss-link"
-              onClick={handleDismiss}
-            >
-              maybe later 💭
-            </button>
-          )}
-        </div>
-      </div>
+              {/* Icon container */}
+              <motion.div
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="flex justify-center mb-6"
+              >
+                <div className={`daily-boost-glow-ring ${state === 'success' ? 'success' : ''} relative flex items-center justify-center w-20 h-20 rounded-full border border-primary-400/15 bg-surface-800`}>
+                  {state === 'success' ? (
+                    <motion.div
+                      initial={{ scale: 0, rotate: -45 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                    >
+                      <CheckIcon className="w-9 h-9 text-primary-400" />
+                    </motion.div>
+                  ) : state === 'claiming' ? (
+                    <div className="daily-boost-spinner" />
+                  ) : (
+                    <motion.div
+                      animate={{ y: [0, -3, 0] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <GiftIcon className="w-9 h-9 text-primary-400" />
+                    </motion.div>
+                  )}
+
+                  {/* Corner sparkle accents */}
+                  {state === 'idle' && (
+                    <>
+                      <SparkleIcon className="absolute -top-1 -right-1 w-3.5 h-3.5 text-primary-400/40" />
+                      <SparkleIcon className="absolute -bottom-0.5 -left-1 w-2.5 h-2.5 text-primary-400/25" />
+                    </>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Credit amount */}
+              <motion.div
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.25, duration: 0.4 }}
+                className="text-center mb-8"
+              >
+                <div className="flex items-baseline justify-center gap-1.5">
+                  <span className="text-lg font-semibold text-primary-400/70">+</span>
+                  <span className="daily-boost-credit-number text-5xl font-bold tracking-tight">
+                    {state === 'success' ? displayedCredits : creditAmount}
+                  </span>
+                </div>
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/30 mt-1">
+                  Spark Credits
+                </p>
+              </motion.div>
+
+              {/* Action area */}
+              <AnimatePresence mode="wait">
+                {/* Claim button */}
+                {state === 'idle' && !showTurnstile && (
+                  <motion.div
+                    key="claim-btn"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleClaimClick}
+                      className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-primary-400 to-primary-500 text-surface-950 font-semibold text-sm tracking-wide shadow-lg shadow-primary-400/15 transition-all duration-200 hover:from-primary-300 hover:to-primary-400 cursor-pointer"
+                    >
+                      Claim Now
+                    </motion.button>
+                  </motion.div>
+                )}
+
+                {/* Turnstile verification */}
+                {showTurnstile && state === 'idle' && (
+                  <motion.div
+                    key="turnstile"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25 }}
+                    className="daily-boost-turnstile flex flex-col items-center gap-3"
+                  >
+                    <p className="text-xs text-white/40">Quick verification</p>
+                    <Turnstile
+                      sitekey={getTurnstileKey()}
+                      onVerify={handleTurnstileVerify}
+                    />
+                  </motion.div>
+                )}
+
+                {/* Claiming state */}
+                {state === 'claiming' && (
+                  <motion.div
+                    key="claiming"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-center"
+                  >
+                    <p className="text-sm text-white/40">Claiming your credits...</p>
+                  </motion.div>
+                )}
+
+                {/* Success state */}
+                {state === 'success' && (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                    className="text-center"
+                  >
+                    <p className="text-sm font-medium gradient-text">Claimed!</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Dismiss link */}
+              {state === 'idle' && !showTurnstile && (
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.3 }}
+                  onClick={handleDismiss}
+                  className="block w-full mt-4 text-center text-xs text-white/25 hover:text-white/45 transition-colors duration-200 cursor-pointer"
+                >
+                  Maybe later
+                </motion.button>
+              )}
+
+              {/* Deco line bottom */}
+              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary-400/20 to-transparent" />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 
-  // Use portal to render at document body level, avoiding parent transform/overflow issues
   return createPortal(modalContent, document.body);
 };
 
