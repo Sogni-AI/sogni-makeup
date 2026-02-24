@@ -55,6 +55,16 @@ export interface GenerationResult {
   cost?: number;
 }
 
+// Edit stack
+export interface EditStep {
+  transformation: Transformation;
+  resultImageUrl: string;
+  resultImageBase64: string;
+  timestamp: number;
+}
+
+export type EditMode = 'stacked' | 'original';
+
 export interface GenerationProgress {
   projectId: string;
   status: 'uploading' | 'queued' | 'generating' | 'completed' | 'error' | 'cancelled';
