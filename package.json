@@ -33,6 +33,8 @@
     "framer-motion": "^12.9.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-turnstile": "^1.1.5",
+    "swiper": "^12.1.2",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
