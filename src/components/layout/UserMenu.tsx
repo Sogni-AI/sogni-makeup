@@ -134,9 +134,18 @@ function UserMenu({ onPurchaseClick }: UserMenuProps) {
             {/* Balance display */}
             {balanceDisplay && (
               <div className="px-4 pb-2">
-                <p className="text-xs text-white/60">
+                <p className="flex items-center gap-1.5 text-xs text-white/60">
                   Balance:{' '}
                   <span className="text-primary-300">{balanceDisplay}</span>
+                  <a
+                    href="https://www.sogni.ai/assets"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center h-3.5 w-3.5 rounded-full border border-white/20 text-[9px] leading-none text-white/40 hover:text-white/70 hover:border-white/40 transition-colors"
+                    title="Learn about Sogni tokens &amp; Spark"
+                  >
+                    ?
+                  </a>
                 </p>
               </div>
             )}
