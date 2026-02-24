@@ -16,6 +16,7 @@ interface EditStackState {
 type EditStackAction =
   | { type: 'undo' }
   | { type: 'redo' }
+  | { type: 'goToStep'; index: number }
   | { type: 'push'; step: EditStep }
   | { type: 'updateBase64'; index: number; base64: string }
   | { type: 'updateLatestBase64'; base64: string }
@@ -37,6 +38,12 @@ function editStackReducer(state: EditStackState, action: EditStackAction): EditS
     case 'redo':
       if (state.currentIndex >= state.steps.length - 1) return state;
       return { ...state, currentIndex: state.currentIndex + 1 };
+
+    case 'goToStep': {
+      const clamped = Math.max(-1, Math.min(state.steps.length - 1, action.index));
+      if (clamped === state.currentIndex) return state;
+      return { ...state, currentIndex: clamped };
+    }
 
     case 'push': {
       // Truncate any redo steps beyond current position
@@ -98,6 +105,7 @@ export interface UseEditStackReturn {
   // Actions
   undo: () => void;
   redo: () => void;
+  goToStep: (index: number) => void;
   pushStep: (step: EditStep) => void;
   updateStepBase64: (index: number, base64: string) => void;
   updateLatestBase64: (base64: string) => void;
@@ -116,6 +124,7 @@ export function useEditStack(): UseEditStackReturn {
 
   const undo = useCallback(() => dispatch({ type: 'undo' }), []);
   const redo = useCallback(() => dispatch({ type: 'redo' }), []);
+  const goToStep = useCallback((index: number) => dispatch({ type: 'goToStep', index }), []);
   const pushStep = useCallback((step: EditStep) => dispatch({ type: 'push', step }), []);
   const updateStepBase64 = useCallback(
     (index: number, base64: string) => dispatch({ type: 'updateBase64', index, base64 }),
@@ -140,6 +149,7 @@ export function useEditStack(): UseEditStackReturn {
     hasSteps: steps.length > 0,
     undo,
     redo,
+    goToStep,
     pushStep,
     updateStepBase64,
     updateLatestBase64,

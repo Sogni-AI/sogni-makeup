@@ -175,3 +175,244 @@
   background: rgba(12, 10, 9, 0.85);
   z-index: 30;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Coverflow History Carousel                                                 */
+/* -------------------------------------------------------------------------- */
+
+.coverflow-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Card base ─────────────────────────────────────────────────────────────── */
+
+.coverflow-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 16px;
+  overflow: hidden;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  background: rgba(12, 10, 9, 0.95);
+  transition: box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Active (hero) card ────────────────────────────────────────────────────── */
+
+.coverflow-card--active {
+  cursor: default;
+  border: 1px solid rgba(212, 163, 115, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(212, 163, 115, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.65),
+    0 16px 48px rgba(0, 0, 0, 0.50),
+    0 32px 80px rgba(212, 163, 115, 0.10);
+}
+
+/* ── Inactive (depth) cards ────────────────────────────────────────────────── */
+
+.coverflow-card--inactive {
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.50),
+    0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.coverflow-card--inactive:hover {
+  border-color: rgba(212, 163, 115, 0.28);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.60),
+    0 10px 28px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(212, 163, 115, 0.12);
+}
+
+/* ── Card image ────────────────────────────────────────────────────────────── */
+
+.coverflow-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Label (non-active cards) ──────────────────────────────────────────────── */
+
+.coverflow-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 6px 6px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.70) 100%);
+  border-radius: 0 0 16px 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.coverflow-label-text {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(212, 163, 115, 0.85);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 1.0);
+  line-height: 1;
+}
+
+.coverflow-label-icon {
+  font-size: 13px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.9));
+}
+
+/* ── Generating placeholder ────────────────────────────────────────────────── */
+
+.coverflow-placeholder {
+  border: 2px dashed rgba(212, 163, 115, 0.20);
+  cursor: default;
+}
+
+.coverflow-shimmer {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(212, 163, 115, 0.04) 0%,
+    rgba(212, 163, 115, 0.12) 50%,
+    rgba(212, 163, 115, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: coverflow-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes coverflow-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Mobile tweaks ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .coverflow-label-text {
+    font-size: 8px;
+  }
+
+  .coverflow-label-icon {
+    font-size: 11px;
+  }
+
+  .coverflow-card {
+    border-radius: 12px;
+  }
+
+  .coverflow-label {
+    border-radius: 0 0 12px 12px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Fullscreen Comparison Overlay                                               */
+/* -------------------------------------------------------------------------- */
+
+.fullscreen-comparison-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 4, 3, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.fullscreen-comparison-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  padding-bottom: 72px; /* room for the action bar */
+  transform-origin: center center;
+}
+
+.fullscreen-comparison-slider {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ── Bottom bar ─────────────────────────────────────────────────────────────── */
+
+.fullscreen-comparison-bar {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(212, 163, 115, 0.10);
+  background: rgba(12, 10, 9, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Close button (top-right) ───────────────────────────────────────────────── */
+
+.fullscreen-comparison-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 10, 9, 0.6);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.fullscreen-comparison-close-btn:hover {
+  background: rgba(212, 163, 115, 0.1);
+  border-color: rgba(212, 163, 115, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ── Mobile adjustments ──────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .fullscreen-comparison-panel {
+    padding: 8px;
+    padding-bottom: 64px;
+  }
+
+  .fullscreen-comparison-bar {
+    bottom: 12px;
+  }
+
+  .fullscreen-comparison-close-btn {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+  }
+}

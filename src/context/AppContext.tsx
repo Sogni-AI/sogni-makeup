@@ -697,7 +697,6 @@ export function AppProvider({ children }: AppProviderProps) {
             category: transformation.category,
           });
 
-          setCurrentView('results');
         } else {
           // ---------------------------------------------------------------
           // Path B: Backend proxy via SSE (demo / unauthenticated)
@@ -925,7 +924,6 @@ export function AppProvider({ children }: AppProviderProps) {
                   setDemoGenerationsRemaining(remaining);
                 }
 
-                setCurrentView('results');
                 resolve();
               } catch {
                 reject(new Error('Failed to parse completion data'));

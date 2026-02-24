@@ -5,8 +5,7 @@ import type { TransformationCategory, Transformation } from '@/types';
 import { CATEGORIES, getSubcategoriesForGender } from '@/constants/transformations';
 import CategoryNav from '@/components/studio/CategoryNav';
 import TransformationPicker from '@/components/studio/TransformationPicker';
-import OriginalPhoto from '@/components/studio/OriginalPhoto';
-import ResultDisplay from '@/components/studio/ResultDisplay';
+import EditHistoryCarousel from '@/components/studio/EditHistoryCarousel';
 import GenerationProgress from '@/components/studio/GenerationProgress';
 import DemoBanner from '@/components/auth/DemoBanner';
 import { useMakeoverCostEstimate } from '@/hooks/useMakeoverCostEstimate';
@@ -99,33 +98,7 @@ function MakeoverStudio() {
         <div className="studio-content">
           {/* Photo area */}
           <div className="studio-photo-area">
-            {(() => {
-              const displayUrl = editStack.activeImageUrl;
-              const showResult = displayUrl && !isGenerating;
-
-              if (showResult) {
-                return <ResultDisplay resultUrl={displayUrl} />;
-              }
-
-              return (
-                <>
-                  <OriginalPhoto imageUrl={originalImageUrl} />
-                  {editStack.canRedo && !isGenerating && (
-                    <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2">
-                      <button
-                        onClick={editStack.redo}
-                        className="flex items-center gap-1.5 rounded-full border border-primary-400/10 bg-surface-900/80 px-3 py-1.5 text-xs font-medium text-white/70 shadow-xl backdrop-blur-md transition-colors hover:bg-primary-400/[0.06] hover:text-white"
-                      >
-                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3" />
-                        </svg>
-                        Redo
-                      </button>
-                    </div>
-                  )}
-                </>
-              );
-            })()}
+            <EditHistoryCarousel />
 
             {/* Enhancement progress overlay */}
             {enhanceProgress &&
