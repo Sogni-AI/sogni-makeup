@@ -70,7 +70,7 @@ SOGNI_USERNAME=your_username
 SOGNI_PASSWORD=your_password
 SOGNI_APP_ID=your_app_id
 CLIENT_ORIGIN=https://makeover-local.sogni.ai
-PORT=3002
+PORT=3003
 ```
 
 ### Run
@@ -78,7 +78,7 @@ PORT=3002
 Start the backend and frontend in separate terminals:
 
 ```bash
-# Terminal 1 — Backend (port 3002)
+# Terminal 1 — Backend (port 3003)
 cd server && npm run dev
 
 # Terminal 2 — Frontend (port 5176)

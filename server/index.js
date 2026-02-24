@@ -21,7 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || 3003;
 
 // Middleware ordering is important
 // 1. Trust proxy (if applicable)
@@ -33,9 +33,9 @@ const allowedOrigins = [
   'https://makeover-staging.sogni.ai',
   'https://makeover-local.sogni.ai',
   'http://localhost:5176',
-  'http://localhost:3002',
+  'http://localhost:3003',
   'http://127.0.0.1:5176',
-  'http://127.0.0.1:3002'
+  'http://127.0.0.1:3003'
 ];
 
 app.use(cors({

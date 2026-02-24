@@ -161,40 +161,10 @@ ssh $REMOTE_HOST /bin/bash --noprofile --norc << 'EOF'
     echo "✅ PM2 is already installed"
   fi
 
-  # Stop and remove our PM2 process first
+  # Start or restart the backend using PM2
   echo "🔧 Starting backend service with PM2..."
   pm2 delete sogni-makeover-production 2>/dev/null || true
-
-  # Kill any stale process on port 3002 (may be from another PM2 app).
-  # Retry because PM2 auto-restarts managed processes after kill -9.
-  for attempt in 1 2 3; do
-    PID=$(lsof -i:3002 -t 2>/dev/null)
-    if [ -z "$PID" ]; then
-      break
-    fi
-    echo "🔧 Port 3002 in use by PID $PID (attempt $attempt/3), killing..."
-    # Try to find and delete the PM2 process managing this PID
-    PM2_NAME=$(pm2 jlist 2>/dev/null | node -e "
-      let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{
-        try{JSON.parse(d).forEach(p=>{if(String(p.pid)===process.argv[1])console.log(p.name)});}catch(e){}
-      });" "$PID" 2>/dev/null)
-    if [ ! -z "$PM2_NAME" ]; then
-      echo "  Found PM2 process '$PM2_NAME' on port 3002, deleting from PM2..."
-      pm2 delete "$PM2_NAME" 2>/dev/null || true
-      sleep 1
-    fi
-    kill -9 $PID 2>/dev/null || true
-    sleep 2
-  done
-
-  # Verify port is free
-  if lsof -i:3002 -t > /dev/null 2>&1; then
-    echo "❌ Port 3002 is still in use after cleanup! Check PM2 processes manually."
-    pm2 list
-    exit 1
-  fi
-
-  PORT=3002 pm2 start index.js --name sogni-makeover-production
+  PORT=3003 pm2 start index.js --name sogni-makeover-production
   pm2 save
   
   # Setup PM2 to start on system boot
@@ -237,9 +207,9 @@ if [ "$HEALTH_CODE" = "200" ]; then
   if echo "$HEALTH_RESPONSE" | grep -q "Server is running"; then
     echo "✅ Confirmed: Sogni Makeover backend is responding"
   else
-    echo "❌ WARNING: Port 3002 is responding but NOT with Sogni Makeover code!"
+    echo "❌ WARNING: Port 3003 is responding but NOT with Sogni Makeover code!"
     echo "   Health response: $HEALTH_RESPONSE"
-    echo "   A stale process may be occupying port 3002. Check with: ssh $REMOTE_HOST 'pm2 list'"
+    echo "   A stale process may be occupying port 3003. Check with: ssh $REMOTE_HOST 'pm2 list'"
   fi
 else
   echo "❌ Backend API health check failed with status $HEALTH_CODE"

@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => {
   const appVersion = packageJson.version;
   console.log(`App version: ${appVersion}`);
 
-  // Determine the backend API port - default to 3002 if not specified
-  const backendPort = parseInt(env.BACKEND_PORT || "3002", 10);
+  // Determine the backend API port - default to 3003 if not specified
+  const backendPort = parseInt(env.BACKEND_PORT || "3003", 10);
   console.log(`Backend API configured on port: ${backendPort}`);
 
   return {

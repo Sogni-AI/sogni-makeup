@@ -18,7 +18,7 @@ npm install
 cp server/.env.example server/.env  # Add Sogni credentials
 
 # Run development servers
-cd server && npm run dev    # Terminal 1: Backend (port 3002)
+cd server && npm run dev    # Terminal 1: Backend (port 3003)
 npm run dev                 # Terminal 2: Frontend (port 5176)
 
 # Build
@@ -72,7 +72,7 @@ When users are authenticated, the frontend uses the SDK directly via `FrontendSo
   - `styles/` - Global styles and Tailwind utilities
   - `types/` - TypeScript type definitions
   - `utils/` - Utility functions (image processing, etc.)
-- `server/` - Express backend (separate package.json, port 3002)
+- `server/` - Express backend (separate package.json, port 3003)
   - `routes/` - API route handlers
   - `services/` - Core SDK instance management
 - `public/` - Static assets, PWA manifest, icons
