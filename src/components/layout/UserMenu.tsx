@@ -2,16 +2,27 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { useToast } from '@/context/ToastContext';
+import { useRewards } from '@/context/RewardsContext';
 import { useWallet } from '@/hooks/useWallet';
 import { formatTokenAmount, getTokenLabel } from '@/services/walletService';
 import type { TokenType } from '@/types/wallet';
 
-function UserMenu() {
+interface UserMenuProps {
+  onPurchaseClick?: () => void;
+}
+
+function UserMenu({ onPurchaseClick }: UserMenuProps) {
   const { authState, logout, setCurrentView, resetSettings } = useApp();
   const { showToast } = useToast();
+  const { rewards, claimReward } = useRewards();
   const { balances, tokenType, switchPaymentMethod } = useWallet();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Find daily boost reward
+  const dailyBoostReward = rewards.find(r => r.id === '2');
+  const canClaimDailyBoost = dailyBoostReward?.canClaim &&
+    (!dailyBoostReward?.nextClaim || dailyBoostReward.nextClaim.getTime() <= Date.now());
 
   // Close on outside click (mousedown)
   useEffect(() => {
@@ -60,6 +71,11 @@ function UserMenu() {
     setIsOpen(false);
     resetSettings();
     showToast('Settings reset to defaults', 'success');
+  };
+
+  const handlePurchase = () => {
+    setIsOpen(false);
+    onPurchaseClick?.();
   };
 
   const handleSwitchPayment = (type: TokenType) => {
@@ -120,6 +136,37 @@ function UserMenu() {
             {balances === null && (
               <div className="px-4 pb-2">
                 <p className="text-xs text-white/40">&mdash;</p>
+              </div>
+            )}
+
+            {/* Buy Spark button */}
+            {onPurchaseClick && (
+              <div className="px-4 pb-2">
+                <button
+                  onClick={handlePurchase}
+                  className="w-full rounded-lg bg-primary-400/10 px-3 py-2 text-xs font-medium text-primary-300 transition-colors hover:bg-primary-400/20"
+                >
+                  Buy Spark
+                </button>
+              </div>
+            )}
+
+            {/* Daily Boost claim button */}
+            {canClaimDailyBoost && (
+              <div className="px-4 pb-2">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (dailyBoostReward) claimReward(dailyBoostReward.id);
+                  }}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-300 transition-colors hover:bg-amber-400/20"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400"></span>
+                  </span>
+                  Claim Daily Boost
+                </button>
               </div>
             )}
 

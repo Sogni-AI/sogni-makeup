@@ -5,7 +5,11 @@ import Button from '@/components/common/Button';
 import LoginModal from '@/components/auth/LoginModal';
 import UserMenu from '@/components/layout/UserMenu';
 
-function Header() {
+interface HeaderProps {
+  onPurchaseClick?: () => void;
+}
+
+function Header({ onPurchaseClick }: HeaderProps) {
   const { authState, currentView, setCurrentView } = useApp();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -48,7 +52,7 @@ function Header() {
             )}
 
             {authState.isAuthenticated ? (
-              <UserMenu />
+              <UserMenu onPurchaseClick={onPurchaseClick} />
             ) : (
               <div className="flex items-center gap-2">
                 <Button
