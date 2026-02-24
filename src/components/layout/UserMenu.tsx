@@ -5,6 +5,7 @@ import { useToast } from '@/context/ToastContext';
 import { useRewards } from '@/context/RewardsContext';
 import { useWallet } from '@/hooks/useWallet';
 import { formatTokenAmount, getTokenLabel } from '@/services/walletService';
+import { MODEL_OPTIONS } from '@/constants/settings';
 import type { TokenType } from '@/types/wallet';
 
 interface UserMenuProps {
@@ -12,7 +13,7 @@ interface UserMenuProps {
 }
 
 function UserMenu({ onPurchaseClick }: UserMenuProps) {
-  const { authState, logout, setCurrentView, resetSettings } = useApp();
+  const { authState, logout, setCurrentView, resetSettings, settings, updateSetting } = useApp();
   const { showToast } = useToast();
   const { rewards, claimReward } = useRewards();
   const { balances, tokenType, switchPaymentMethod } = useWallet();
@@ -169,6 +170,24 @@ function UserMenu({ onPurchaseClick }: UserMenuProps) {
                 </button>
               </div>
             )}
+
+            {/* Model selector */}
+            <div className="px-4 pb-3">
+              <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-white/40">
+                Model
+              </p>
+              <select
+                value={settings.defaultModel}
+                onChange={(e) => updateSetting('defaultModel', e.target.value)}
+                className="w-full appearance-none rounded-lg border border-primary-400/[0.08] bg-surface-800 px-3 py-1.5 text-xs font-medium text-white/80 outline-none transition-colors hover:border-primary-400/20 focus:border-primary-400/30"
+              >
+                {MODEL_OPTIONS.map((model) => (
+                  <option key={model.value} value={model.value}>
+                    {model.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Payment method toggle */}
             <div className="px-4 pb-3">

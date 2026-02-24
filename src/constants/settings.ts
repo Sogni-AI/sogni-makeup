@@ -1,6 +1,56 @@
 import type { AppSettings } from '@/types';
 
-export const DEFAULT_MODEL = 'qwen_image_edit_2511_fp8_lightning';
+// ---------------------------------------------------------------------------
+// Model IDs
+// ---------------------------------------------------------------------------
+
+export const QWEN_LIGHTNING_MODEL_ID = 'qwen_image_edit_2511_fp8_lightning';
+export const QWEN_STANDARD_MODEL_ID = 'qwen_image_edit_2511_fp8';
+export const FLUX2_DEV_MODEL_ID = 'flux2_dev_fp8';
+
+export const DEFAULT_MODEL = QWEN_LIGHTNING_MODEL_ID;
+
+// ---------------------------------------------------------------------------
+// Per-model defaults (pulled from sogni-photobooth)
+// ---------------------------------------------------------------------------
+
+export interface ModelOption {
+  label: string;
+  value: string;
+  defaults: {
+    steps: number;
+    guidance: number;
+    sampler: string;
+    scheduler: string;
+  };
+}
+
+export const MODEL_OPTIONS: ModelOption[] = [
+  {
+    label: 'Qwen Lightning',
+    value: QWEN_LIGHTNING_MODEL_ID,
+    defaults: { steps: 4, guidance: 1, sampler: 'euler', scheduler: 'simple' },
+  },
+  {
+    label: 'Qwen 2511',
+    value: QWEN_STANDARD_MODEL_ID,
+    defaults: { steps: 25, guidance: 2.5, sampler: 'euler', scheduler: 'simple' },
+  },
+  {
+    label: 'Flux.2 [dev]',
+    value: FLUX2_DEV_MODEL_ID,
+    defaults: { steps: 30, guidance: 4, sampler: 'euler', scheduler: 'simple' },
+  },
+];
+
+/** Look up the ModelOption for a given model ID, falling back to the first entry. */
+export function getModelOption(modelId: string): ModelOption {
+  return MODEL_OPTIONS.find((m) => m.value === modelId) ?? MODEL_OPTIONS[0];
+}
+
+// ---------------------------------------------------------------------------
+// App-wide default settings
+// ---------------------------------------------------------------------------
 
 export const DEFAULT_SETTINGS: AppSettings = {
   defaultModel: DEFAULT_MODEL,

@@ -11,7 +11,7 @@ import type {
   TransformationCategory,
   GenerationParams,
 } from '@/types';
-import { DEFAULT_SETTINGS, GENERATION_DEFAULTS, DEMO_MODE_LIMITS } from '@/constants/settings';
+import { DEFAULT_SETTINGS, GENERATION_DEFAULTS, DEMO_MODE_LIMITS, getModelOption } from '@/constants/settings';
 import {
   getDemoGenerationCount,
   incrementDemoGenerationCount,
@@ -155,10 +155,19 @@ export function AppProvider({ children }: AppProviderProps) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   // -- Settings --
-  const [settings, setSettings] = useState<AppSettings>(() => ({
-    ...DEFAULT_SETTINGS,
-    autoEnhanceWebcam: getSettingFromStorage<boolean>('autoEnhanceWebcam', DEFAULT_SETTINGS.autoEnhanceWebcam),
-  }));
+  const [settings, setSettings] = useState<AppSettings>(() => {
+    const savedModel = getSettingFromStorage<string>('defaultModel', DEFAULT_SETTINGS.defaultModel);
+    const modelOption = getModelOption(savedModel);
+    return {
+      ...DEFAULT_SETTINGS,
+      defaultModel: modelOption.value,
+      defaultSteps: modelOption.defaults.steps,
+      defaultGuidance: modelOption.defaults.guidance,
+      defaultSampler: modelOption.defaults.sampler,
+      defaultScheduler: modelOption.defaults.scheduler,
+      autoEnhanceWebcam: getSettingFromStorage<boolean>('autoEnhanceWebcam', DEFAULT_SETTINGS.autoEnhanceWebcam),
+    };
+  });
 
   // -- Auto-enhance --
   const { enhancePhoto, enhanceProgress, isEnhancing, cancelEnhancement } = useAutoEnhance();
@@ -394,15 +403,30 @@ export function AppProvider({ children }: AppProviderProps) {
   const resetSettings = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
     removeSettingFromStorage('autoEnhanceWebcam');
+    removeSettingFromStorage('defaultModel');
   }, []);
 
   /**
    * Update a single setting and persist to localStorage if applicable.
    */
   const updateSetting = useCallback(<K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-    if (key === 'autoEnhanceWebcam') {
-      saveSettingToStorage('autoEnhanceWebcam', value);
+    if (key === 'defaultModel') {
+      // Switching models — cascade the related defaults
+      const modelOption = getModelOption(value as string);
+      setSettings((prev) => ({
+        ...prev,
+        defaultModel: modelOption.value,
+        defaultSteps: modelOption.defaults.steps,
+        defaultGuidance: modelOption.defaults.guidance,
+        defaultSampler: modelOption.defaults.sampler,
+        defaultScheduler: modelOption.defaults.scheduler,
+      }));
+      saveSettingToStorage('defaultModel', modelOption.value);
+    } else {
+      setSettings((prev) => ({ ...prev, [key]: value }));
+      if (key === 'autoEnhanceWebcam') {
+        saveSettingToStorage('autoEnhanceWebcam', value);
+      }
     }
   }, []);
 

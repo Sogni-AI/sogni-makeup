@@ -11,9 +11,7 @@
 import { SogniClient } from '@sogni-ai/sogni-client';
 import { BrowserEventEmitter } from '@/services/sogniBackend';
 import type { CancelProjectResult } from '@/services/api';
-
-// Default model used by Sogni Makeover
-const DEFAULT_MODEL_ID = 'qwen_image_edit_2511_fp8_lightning';
+import { DEFAULT_MODEL } from '@/constants/settings';
 
 // --- FrontendProjectAdapter ---
 
@@ -421,7 +419,7 @@ export class FrontendSogniClientAdapter {
 
         // Default model
         if (!sdkParams.modelId) {
-          sdkParams.modelId = DEFAULT_MODEL_ID;
+          sdkParams.modelId = DEFAULT_MODEL;
         }
 
         // Convert sensitiveContentFilter to disableNSFWFilter for SDK compatibility
