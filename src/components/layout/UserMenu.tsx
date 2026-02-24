@@ -99,6 +99,12 @@ function UserMenu({ onPurchaseClick }: UserMenuProps) {
         className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-white/60 transition-colors hover:bg-primary-400/[0.06] hover:text-white/90"
       >
         <span>{username}</span>
+        {balanceDisplay && (
+          <>
+            <span className="hidden text-white/20 sm:inline">|</span>
+            <span className="hidden text-[11px] text-primary-300/70 sm:inline">{balanceDisplay}</span>
+          </>
+        )}
         <svg
           className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
