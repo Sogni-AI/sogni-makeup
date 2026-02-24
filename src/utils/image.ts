@@ -4,6 +4,9 @@
  */
 export async function fetchImageAsBase64(url: string): Promise<string> {
   const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image: ${response.status}`);
+  }
   const blob = await response.blob();
 
   return new Promise<string>((resolve, reject) => {

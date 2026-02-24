@@ -637,7 +637,6 @@ export function AppProvider({ children }: AppProviderProps) {
           });
 
           // Push to edit stack and start base64 pre-fetch
-          const pushIndex = editStack.currentIndex + 1;
           editStack.pushStep({
             transformation,
             resultImageUrl: resultImageUrl,
@@ -646,7 +645,7 @@ export function AppProvider({ children }: AppProviderProps) {
           });
 
           fetchImageAsBase64(resultImageUrl).then(base64 => {
-            editStack.updateStepBase64(pushIndex, base64);
+            editStack.updateLatestBase64(base64);
           }).catch(() => {
             // Non-critical — will be fetched on-demand if needed
           });
@@ -854,7 +853,6 @@ export function AppProvider({ children }: AppProviderProps) {
                 });
 
                 // Push to edit stack and start base64 pre-fetch
-                const pushIndex = editStack.currentIndex + 1;
                 editStack.pushStep({
                   transformation,
                   resultImageUrl: result.imageUrl,
@@ -863,7 +861,7 @@ export function AppProvider({ children }: AppProviderProps) {
                 });
 
                 fetchImageAsBase64(result.imageUrl).then(base64 => {
-                  editStack.updateStepBase64(pushIndex, base64);
+                  editStack.updateLatestBase64(base64);
                 }).catch(() => {
                   // Non-critical
                 });

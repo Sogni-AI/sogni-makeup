@@ -18,6 +18,7 @@ type EditStackAction =
   | { type: 'redo' }
   | { type: 'push'; step: EditStep }
   | { type: 'updateBase64'; index: number; base64: string }
+  | { type: 'updateLatestBase64'; base64: string }
   | { type: 'setMode'; mode: EditMode }
   | { type: 'reset' };
 
@@ -59,6 +60,14 @@ function editStackReducer(state: EditStackState, action: EditStackAction): EditS
       return { ...state, steps: updated };
     }
 
+    case 'updateLatestBase64': {
+      // Update the step at currentIndex — safe regardless of eviction during push
+      if (state.currentIndex < 0 || state.currentIndex >= state.steps.length) return state;
+      const updated = [...state.steps];
+      updated[state.currentIndex] = { ...updated[state.currentIndex], resultImageBase64: action.base64 };
+      return { ...state, steps: updated };
+    }
+
     case 'setMode':
       return { ...state, mode: action.mode };
 
@@ -91,11 +100,9 @@ export interface UseEditStackReturn {
   redo: () => void;
   pushStep: (step: EditStep) => void;
   updateStepBase64: (index: number, base64: string) => void;
+  updateLatestBase64: (base64: string) => void;
   setMode: (mode: EditMode) => void;
   reset: () => void;
-
-  // Derived helper — returns the base64 to send as contextImages[0]
-  getInputBase64: (originalBase64: string) => string | null;
 }
 
 export function useEditStack(): UseEditStackReturn {
@@ -114,19 +121,12 @@ export function useEditStack(): UseEditStackReturn {
     (index: number, base64: string) => dispatch({ type: 'updateBase64', index, base64 }),
     [],
   );
+  const updateLatestBase64 = useCallback(
+    (base64: string) => dispatch({ type: 'updateLatestBase64', base64 }),
+    [],
+  );
   const setMode = useCallback((mode: EditMode) => dispatch({ type: 'setMode', mode }), []);
   const reset = useCallback(() => dispatch({ type: 'reset' }), []);
-
-  const getInputBase64 = useCallback(
-    (originalBase64: string): string | null => {
-      if (mode === 'original' || !currentStep) {
-        return originalBase64;
-      }
-      // Return the current step's cached base64 (may be empty if still fetching)
-      return currentStep.resultImageBase64 || null;
-    },
-    [mode, currentStep],
-  );
 
   return {
     steps,
@@ -142,8 +142,8 @@ export function useEditStack(): UseEditStackReturn {
     redo,
     pushStep,
     updateStepBase64,
+    updateLatestBase64,
     setMode,
     reset,
-    getInputBase64,
   };
 }
