@@ -16,7 +16,6 @@ const categoryKeys = Object.keys(CATEGORIES) as TransformationCategory[];
 function MakeoverStudio() {
   const {
     originalImageUrl,
-    currentResult,
     setCurrentView,
     resetPhoto,
     isGenerating,
@@ -32,6 +31,7 @@ function MakeoverStudio() {
     isEnhancing,
     cancelEnhancement,
     selectedGender,
+    editStack,
   } = useApp();
 
   const [selectedCategory, setSelectedCategory] = useState<TransformationCategory>(categoryKeys[0]);
@@ -70,8 +70,6 @@ function MakeoverStudio() {
     return null;
   }
 
-  const resultUrl = currentResult?.imageUrl ?? null;
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -95,11 +93,33 @@ function MakeoverStudio() {
         <div className="studio-content">
           {/* Photo area */}
           <div className="studio-photo-area">
-            {resultUrl && !isGenerating ? (
-              <ResultDisplay resultUrl={resultUrl} />
-            ) : (
-              <OriginalPhoto imageUrl={originalImageUrl} />
-            )}
+            {(() => {
+              const displayUrl = editStack.activeImageUrl;
+              const showResult = displayUrl && !isGenerating;
+
+              if (showResult) {
+                return <ResultDisplay resultUrl={displayUrl} />;
+              }
+
+              return (
+                <>
+                  <OriginalPhoto imageUrl={originalImageUrl} />
+                  {editStack.canRedo && !isGenerating && (
+                    <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2">
+                      <button
+                        onClick={editStack.redo}
+                        className="flex items-center gap-1.5 rounded-full border border-primary-400/10 bg-surface-900/80 px-3 py-1.5 text-xs font-medium text-white/70 shadow-xl backdrop-blur-md transition-colors hover:bg-primary-400/[0.06] hover:text-white"
+                      >
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l6-6m0 0l-6-6m6 6H9a6 6 0 000 12h3" />
+                        </svg>
+                        Redo
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
 
             {/* Enhancement progress overlay */}
             {enhanceProgress &&
@@ -151,14 +171,50 @@ function MakeoverStudio() {
                   </button>
                 </>
               )}
-              {currentTransformation && (
+              {editStack.hasSteps && (
                 <>
                   <span className="text-[10px] text-white/10">|</span>
-                  <span className="text-[11px] text-primary-300/70">
-                    {currentTransformation.icon} {currentTransformation.name}
-                  </span>
+                  <div className="flex items-center rounded-full border border-primary-400/[0.06] bg-surface-900/40">
+                    <button
+                      onClick={() => editStack.setMode('original')}
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
+                        editStack.mode === 'original'
+                          ? 'bg-primary-400/15 text-primary-300'
+                          : 'text-white/35 hover:text-white/60'
+                      }`}
+                    >
+                      Original
+                    </button>
+                    <button
+                      onClick={() => editStack.setMode('stacked')}
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${
+                        editStack.mode === 'stacked'
+                          ? 'bg-primary-400/15 text-primary-300'
+                          : 'text-white/35 hover:text-white/60'
+                      }`}
+                    >
+                      Stacked
+                    </button>
+                  </div>
                 </>
               )}
+              {(() => {
+                const displayTransformation = editStack.currentStep?.transformation ?? currentTransformation;
+                if (!displayTransformation) return null;
+                return (
+                  <>
+                    <span className="text-[10px] text-white/10">|</span>
+                    <span className="text-[11px] text-primary-300/70">
+                      {displayTransformation.icon} {displayTransformation.name}
+                      {editStack.stepCount > 1 && (
+                        <span className="ml-1 text-white/25">
+                          ({Math.max(0, editStack.currentIndex + 1)} of {editStack.stepCount})
+                        </span>
+                      )}
+                    </span>
+                  </>
+                );
+              })()}
             </div>
 
             <TransformationPicker

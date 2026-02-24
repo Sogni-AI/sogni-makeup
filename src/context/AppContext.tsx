@@ -27,6 +27,10 @@ import { getURLs } from '@/config/urls';
 import { sogniAuth } from '@/services/sogniAuth';
 import { FrontendSogniClientAdapter } from '@/services/frontendSogniAdapter';
 import { getPaymentMethod } from '@/services/walletService';
+import type { EditMode } from '@/types';
+import { useEditStack } from '@/hooks/useEditStack';
+import type { UseEditStackReturn } from '@/hooks/useEditStack';
+import { fetchImageAsBase64 } from '@/utils/image';
 
 // ---------------------------------------------------------------------------
 // Context shape
@@ -60,6 +64,9 @@ interface AppContextValue {
   setGenerationProgress: (progress: GenerationProgress | null) => void;
   isGenerating: boolean;
   currentResult: GenerationResult | null;
+
+  // Edit stack
+  editStack: UseEditStackReturn;
 
   // History
   history: HistoryItem[];
@@ -155,6 +162,23 @@ export function AppProvider({ children }: AppProviderProps) {
 
   // -- Auto-enhance --
   const { enhancePhoto, enhanceProgress, isEnhancing, cancelEnhancement } = useAutoEnhance();
+
+  // -- Edit stack --
+  const editStack = useEditStack();
+
+  // Ref to hold current input image for generation.
+  // Avoids adding editStack to generateMakeover's dependency array.
+  const editStackInputRef = useRef<{
+    mode: EditMode;
+    currentStepBase64: string | null;
+    currentStepUrl: string | null;
+  }>({ mode: 'stacked', currentStepBase64: null, currentStepUrl: null });
+
+  editStackInputRef.current = {
+    mode: editStack.mode,
+    currentStepBase64: editStack.currentStep?.resultImageBase64 ?? null,
+    currentStepUrl: editStack.currentStep?.resultImageUrl ?? null,
+  };
 
   // -- SDK client --
   const [sogniClient, setSogniClient] = useState<unknown>(null);
@@ -286,7 +310,9 @@ export function AppProvider({ children }: AppProviderProps) {
     setCurrentTransformation(null);
     setGenerationProgress(null);
     setCurrentResult(null);
+    editStack.reset();
     setCurrentView('capture');
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- editStack.reset is a stable callback (useCallback with [] deps)
   }, []);
 
   /**
@@ -417,13 +443,28 @@ export function AppProvider({ children }: AppProviderProps) {
         return;
       }
 
+      // Determine input image: stacked mode uses previous result, original mode uses original
+      let inputBase64 = originalImageBase64;
+      const { mode: stackMode, currentStepBase64, currentStepUrl } = editStackInputRef.current;
+      if (stackMode === 'stacked' && currentStepBase64) {
+        inputBase64 = currentStepBase64;
+      } else if (stackMode === 'stacked' && currentStepUrl) {
+        // Base64 not yet cached — fetch on demand
+        try {
+          inputBase64 = await fetchImageAsBase64(currentStepUrl);
+        } catch {
+          // Fall back to original if fetch fails
+          console.warn('Failed to fetch stacked image, falling back to original');
+        }
+      }
+
       // 2. Build params
       const negativePrompt = transformation.negativePrompt ?? GENERATION_DEFAULTS.negativePrompt;
       const params: GenerationParams = {
         modelId: settings.defaultModel,
         positivePrompt: transformation.prompt,
         negativePrompt,
-        contextImages: [originalImageBase64],
+        contextImages: [inputBase64],
         width: settings.defaultWidth,
         height: settings.defaultHeight,
         guidance: settings.defaultGuidance,
@@ -593,6 +634,20 @@ export function AppProvider({ children }: AppProviderProps) {
             status: 'completed',
             progress: 100,
             message: 'Makeover complete!',
+          });
+
+          // Push to edit stack and start base64 pre-fetch
+          editStack.pushStep({
+            transformation,
+            resultImageUrl: resultImageUrl,
+            resultImageBase64: '',
+            timestamp: Date.now(),
+          });
+
+          fetchImageAsBase64(resultImageUrl).then(base64 => {
+            editStack.updateLatestBase64(base64);
+          }).catch(() => {
+            // Non-critical — will be fetched on-demand if needed
           });
 
           // Build history item
@@ -797,6 +852,20 @@ export function AppProvider({ children }: AppProviderProps) {
                   message: 'Makeover complete!',
                 });
 
+                // Push to edit stack and start base64 pre-fetch
+                editStack.pushStep({
+                  transformation,
+                  resultImageUrl: result.imageUrl,
+                  resultImageBase64: '',
+                  timestamp: Date.now(),
+                });
+
+                fetchImageAsBase64(result.imageUrl).then(base64 => {
+                  editStack.updateLatestBase64(base64);
+                }).catch(() => {
+                  // Non-critical
+                });
+
                 // Build history item
                 const historyItem: HistoryItem = {
                   id: `${projectId}-${Date.now()}`,
@@ -886,6 +955,7 @@ export function AppProvider({ children }: AppProviderProps) {
         abortControllerRef.current = null;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- editStack methods are stable callbacks; editStackInputRef is used via ref
     [
       authState.isAuthenticated,
       originalImageBase64,
@@ -925,6 +995,7 @@ export function AppProvider({ children }: AppProviderProps) {
         setGenerationProgress,
         isGenerating,
         currentResult,
+        editStack,
         history,
         addToHistory,
         clearHistory,
