@@ -3,9 +3,12 @@ export type TransformationCategory =
   | 'hairstyles'
   | 'makeup'
   | 'clothing'
+  | 'accessories'
   | 'facial'
+  | 'expression'
   | 'body'
-  | 'age-fantasy';
+  | 'age-fantasy'
+  | 'lighting';
 
 export interface TransformationSubcategory {
   id: string;
