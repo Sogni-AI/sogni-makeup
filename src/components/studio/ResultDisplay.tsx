@@ -40,7 +40,11 @@ function ResultDisplay({ resultUrl }: ResultDisplayProps) {
             className="flex h-full w-full items-center justify-center p-4"
           >
             <BeforeAfterSlider
-              beforeImage={originalImageUrl}
+              beforeImage={
+                editStack.mode === 'stacked' && editStack.currentIndex > 0
+                  ? editStack.steps[editStack.currentIndex - 1].resultImageUrl
+                  : originalImageUrl
+              }
               afterImage={resultUrl}
               className="max-h-full"
             />

@@ -9,6 +9,7 @@ function ComparisonView() {
     currentResult,
     currentTransformation,
     setCurrentView,
+    editStack,
   } = useApp();
 
   const resultImageUrl = currentResult?.imageUrl ?? null;
@@ -80,7 +81,11 @@ function ComparisonView() {
         className="flex min-h-0 flex-1 items-center justify-center p-4"
       >
         <BeforeAfterSlider
-          beforeImage={originalImageUrl}
+          beforeImage={
+            editStack.mode === 'stacked' && editStack.currentIndex > 0
+              ? editStack.steps[editStack.currentIndex - 1].resultImageUrl
+              : originalImageUrl
+          }
           afterImage={resultImageUrl}
           className="max-h-full"
         />
