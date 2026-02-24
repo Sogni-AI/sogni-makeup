@@ -100,8 +100,6 @@ function LandingHero() {
 
   // Portrait rotation effect
   useEffect(() => {
-    let lastShownIdx = 0;
-
     if (hoveredGender) {
       // Show the next sequential image for this gender
       const pairs = hoveredGender === 'female' ? femalePairs : malePairs;
@@ -109,13 +107,11 @@ function LandingHero() {
       transitionTo(pairs[idx]);
       hoverIndexRef.current[hoveredGender] = idx + 1;
       lastGenderRef.current = hoveredGender;
-      lastShownIdx = idx;
 
       // Rotate through same-gender pairs sequentially
       const interval = setInterval(() => {
         const nextIdx = hoverIndexRef.current[hoveredGender] % pairs.length;
         transitionTo(pairs[nextIdx]);
-        lastShownIdx = nextIdx;
         hoverIndexRef.current[hoveredGender] = nextIdx + 1;
       }, 5000);
       return () => clearInterval(interval);
