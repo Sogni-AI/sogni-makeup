@@ -356,6 +356,7 @@ function LandingHero() {
                     className="group relative flex h-20 w-20 items-center justify-center rounded-full border border-primary-400/20 bg-surface-900/60 backdrop-blur-sm transition-all duration-300 hover:border-primary-400/40 hover:bg-primary-400/[0.08] hover:shadow-lg hover:shadow-primary-400/10 sm:h-24 sm:w-24 cursor-pointer"
                   >
                     <VenusIcon className="h-10 w-10 text-white/50 transition-colors duration-300 group-hover:text-primary-300 sm:h-12 sm:w-12" />
+                    <span className="absolute -bottom-6 text-[10px] font-light uppercase tracking-[0.15em] text-white/0 transition-all duration-300 group-hover:text-white/40">femme</span>
                   </motion.button>
 
                   {/* Divider */}
@@ -374,6 +375,7 @@ function LandingHero() {
                     className="group relative flex h-20 w-20 items-center justify-center rounded-full border border-primary-400/20 bg-surface-900/60 backdrop-blur-sm transition-all duration-300 hover:border-primary-400/40 hover:bg-primary-400/[0.08] hover:shadow-lg hover:shadow-primary-400/10 sm:h-24 sm:w-24 cursor-pointer"
                   >
                     <MarsIcon className="h-10 w-10 text-white/50 transition-colors duration-300 group-hover:text-primary-300 sm:h-12 sm:w-12" />
+                    <span className="absolute -bottom-6 text-[10px] font-light uppercase tracking-[0.15em] text-white/0 transition-all duration-300 group-hover:text-white/40">homme</span>
                   </motion.button>
                 </motion.div>
               )}
