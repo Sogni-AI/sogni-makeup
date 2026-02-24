@@ -8,7 +8,7 @@ import { VenusIcon, MarsIcon } from './GenderIcons';
 type ImagePair = { before: string; after: string };
 
 const femalePairs: ImagePair[] = [
-  { before: '/images/before.png', after: '/images/after.png' },
+  { before: '/images/before1.png', after: '/images/after1.png' },
   { before: '/images/before3.png', after: '/images/after3.png' },
   { before: '/images/before4.png', after: '/images/after4.png' },
   { before: '/images/before5.png', after: '/images/after5.png' },
@@ -22,7 +22,12 @@ const malePairs: ImagePair[] = [
   { before: '/images/before8.png', after: '/images/after8.png' },
 ];
 
-const allPairs: ImagePair[] = [...femalePairs, ...malePairs];
+// Interleave female/male so keyboard navigation alternates genders
+const allPairs: ImagePair[] = [];
+for (let i = 0; i < Math.max(femalePairs.length, malePairs.length); i++) {
+  if (i < femalePairs.length) allPairs.push(femalePairs[i]);
+  if (i < malePairs.length) allPairs.push(malePairs[i]);
+}
 
 const containerVariants = {
   hidden: {},
@@ -71,6 +76,8 @@ function LandingHero() {
   const shuffleBagRef = useRef<Record<string, number[]>>({ female: [], male: [] });
   const hoverIndexRef = useRef<Record<string, number>>({ female: 0, male: 0 });
   const keyboardIndexRef = useRef(0);
+  const keyboardGenderIndexRef = useRef(0);
+  const hoveredGenderRef = useRef<Gender | null>(null);
   const prevHoveredGenderRef = useRef<Gender | null>(null);
   const [idleResetKey, setIdleResetKey] = useState(0);
 
@@ -104,21 +111,36 @@ function LandingHero() {
     return pairs[nextIdx];
   }, []);
 
+  // Keep hoveredGenderRef in sync so keyboard handler can read it
+  useEffect(() => {
+    hoveredGenderRef.current = hoveredGender;
+    keyboardGenderIndexRef.current = 0;
+  }, [hoveredGender]);
+
   // Keyboard arrow navigation for portrait slideshow
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
       e.preventDefault();
-      const len = allPairs.length;
-      if (e.key === 'ArrowRight') {
-        keyboardIndexRef.current = (keyboardIndexRef.current + 1) % len;
+      const delta = e.key === 'ArrowRight' ? 1 : -1;
+      const hGender = hoveredGenderRef.current;
+
+      if (hGender) {
+        // Gender-specific: only cycle through hovered gender's pairs
+        const pairs = hGender === 'female' ? femalePairs : malePairs;
+        const len = pairs.length;
+        keyboardGenderIndexRef.current = (keyboardGenderIndexRef.current + delta + len) % len;
+        transitionTo(pairs[keyboardGenderIndexRef.current]);
+        lastGenderRef.current = hGender;
       } else {
-        keyboardIndexRef.current = (keyboardIndexRef.current - 1 + len) % len;
+        // Idle: cycle through interleaved pairs (alternating genders)
+        const len = allPairs.length;
+        keyboardIndexRef.current = (keyboardIndexRef.current + delta + len) % len;
+        const pair = allPairs[keyboardIndexRef.current];
+        transitionTo(pair);
+        // Determine gender of current pair for idle rotation continuity
+        lastGenderRef.current = femalePairs.includes(pair) ? 'female' : 'male';
       }
-      const pair = allPairs[keyboardIndexRef.current];
-      transitionTo(pair);
-      // Update gender tracking so idle rotation continues from the right gender
-      lastGenderRef.current = keyboardIndexRef.current < femalePairs.length ? 'female' : 'male';
       // Reset idle timer
       setIdleResetKey(k => k + 1);
     };
