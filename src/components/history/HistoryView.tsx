@@ -150,13 +150,16 @@ function HistoryView() {
 
               {/* Info */}
               <div className="px-2.5 py-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs">{item.transformation.icon}</span>
-                  <p className="truncate text-sm text-white/60 group-hover:text-white/80">
+                <div className="flex items-start gap-1.5">
+                  <span className="mt-0.5 shrink-0 text-xs">{item.transformation.icon}</span>
+                  <p
+                    className="line-clamp-2 text-sm leading-snug text-white/60 group-hover:text-white/80"
+                    title={item.transformation.name}
+                  >
                     {item.transformation.name}
                   </p>
                 </div>
-                <div className="mt-1 flex items-center justify-between">
+                <div className="mt-1.5 flex items-center justify-between">
                   <p className="text-xs text-white/30">
                     {getRelativeTime(item.timestamp)}
                   </p>

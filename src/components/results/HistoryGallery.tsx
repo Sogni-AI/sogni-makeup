@@ -45,7 +45,10 @@ function HistoryGallery() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <p className="mt-1.5 max-w-[80px] truncate text-center text-[10px] text-white/30 group-hover:text-white/50 sm:max-w-[96px]">
+            <p
+              className="mt-1.5 max-w-[80px] text-center text-[10px] leading-tight text-white/30 group-hover:text-white/50 sm:max-w-[96px] line-clamp-2"
+              title={item.transformation.name}
+            >
               {item.transformation.name}
             </p>
           </motion.button>
