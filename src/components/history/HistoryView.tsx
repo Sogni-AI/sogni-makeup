@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { useToast } from '@/context/ToastContext';
+import { CATEGORIES } from '@/constants/transformations';
 import Button from '@/components/common/Button';
+import type { HistoryItem } from '@/types';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -18,6 +20,20 @@ function getRelativeTime(timestamp: number): string {
   const days = Math.floor(hours / 24);
   if (days < 30) return `${days}d ago`;
   return new Date(timestamp).toLocaleDateString();
+}
+
+function formatDuration(ms: number): string {
+  if (ms <= 0) return '';
+  const seconds = Math.round(ms / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remaining = seconds % 60;
+  return remaining > 0 ? `${minutes}m ${remaining}s` : `${minutes}m`;
+}
+
+function getCategoryLabel(item: HistoryItem): string {
+  const cat = CATEGORIES[item.transformation.category];
+  return cat?.name ?? item.transformation.category;
 }
 
 // ---------------------------------------------------------------------------
@@ -149,25 +165,26 @@ function HistoryView() {
               </div>
 
               {/* Info */}
-              <div className="px-2.5 py-2">
-                <div className="flex items-start gap-1.5">
-                  <span className="mt-0.5 shrink-0 text-xs">{item.transformation.icon}</span>
-                  <p
-                    className="line-clamp-2 text-sm leading-snug text-white/60 group-hover:text-white/80"
-                    title={item.transformation.name}
-                  >
+              <div className="px-2.5 py-2.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="shrink-0 text-xs">{item.transformation.icon}</span>
+                  <p className="truncate text-sm font-medium text-white/80 group-hover:text-white/90">
                     {item.transformation.name}
                   </p>
                 </div>
-                <div className="mt-1.5 flex items-center justify-between">
-                  <p className="text-xs text-white/30">
-                    {getRelativeTime(item.timestamp)}
-                  </p>
-                  {item.cost !== undefined && (
-                    <p className="text-xs text-white/30">
-                      {item.cost.toFixed(2)} credits
-                    </p>
-                  )}
+                <p
+                  className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/40 group-hover:text-white/55"
+                  title={item.transformation.prompt}
+                >
+                  {item.transformation.prompt}
+                </p>
+                <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-white/25">
+                  <span className="rounded-full bg-white/[0.05] px-1.5 py-0.5">
+                    {getCategoryLabel(item)}
+                  </span>
+                  <span>{getRelativeTime(item.timestamp)}</span>
+                  {item.duration > 0 && <span>{formatDuration(item.duration)}</span>}
+                  {item.cost !== undefined && <span>{item.cost.toFixed(2)} credits</span>}
                 </div>
               </div>
             </motion.button>

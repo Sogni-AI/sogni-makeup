@@ -46,8 +46,8 @@ function HistoryGallery() {
               />
             </div>
             <p
-              className="mt-1.5 max-w-[80px] text-center text-[10px] leading-tight text-white/30 group-hover:text-white/50 sm:max-w-[96px] line-clamp-2"
-              title={item.transformation.name}
+              className="mt-1.5 max-w-[80px] line-clamp-2 text-center text-[10px] leading-tight text-white/30 group-hover:text-white/50 sm:max-w-[96px]"
+              title={item.transformation.prompt}
             >
               {item.transformation.name}
             </p>
