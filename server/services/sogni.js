@@ -361,7 +361,7 @@ export async function generateImage(client, params, progressCallback, localProje
       negativePrompt: params.negativePrompt || '',
       sizePreset: 'custom',
       width: params.width || 1024,
-      height: params.height || 1024,
+      height: params.height || 1536,
       steps: inferenceSteps,
       guidance: params.guidance || 1,
       numberOfMedia: params.numberOfMedia || 1,

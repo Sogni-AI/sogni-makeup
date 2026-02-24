@@ -119,16 +119,16 @@ export function base64ToBlob(base64: string): Blob {
 }
 
 /**
- * Center-crop an image to a 4:5 aspect ratio (portrait).
- * Fits the largest 4:5 rectangle inside the original image.
+ * Center-crop an image to a 2:3 aspect ratio (portrait).
+ * Fits the largest 2:3 rectangle inside the original image.
  */
 export async function cropToPortrait(file: File): Promise<File> {
   const bitmap = await createImageBitmap(file);
   const { width, height } = bitmap;
 
-  const TARGET_RATIO = 4 / 5;
+  const TARGET_RATIO = 2 / 3;
 
-  // Already 4:5
+  // Already 2:3
   if (Math.abs(width / height - TARGET_RATIO) < 0.001) {
     bitmap.close();
     return file;
@@ -136,11 +136,11 @@ export async function cropToPortrait(file: File): Promise<File> {
 
   let cropW: number, cropH: number;
   if (width / height > TARGET_RATIO) {
-    // Image is wider than 4:5 — height is the constraint
+    // Image is wider than 2:3 — height is the constraint
     cropH = height;
     cropW = Math.round(height * TARGET_RATIO);
   } else {
-    // Image is taller than 4:5 — width is the constraint
+    // Image is taller than 2:3 — width is the constraint
     cropW = width;
     cropH = Math.round(width / TARGET_RATIO);
   }

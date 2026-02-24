@@ -99,20 +99,20 @@ function CameraView() {
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
 
-    // Crop to 4:5 aspect ratio from the video's native resolution
+    // Crop to 2:3 aspect ratio from the video's native resolution
     const vw = video.videoWidth;
     const vh = video.videoHeight;
 
-    // Determine the largest 4:5 rectangle that fits inside the video
+    // Determine the largest 2:3 rectangle that fits inside the video
     let cropW: number, cropH: number;
-    if (vw / vh > 4 / 5) {
-      // Video is wider than 4:5 — height is the constraint
+    if (vw / vh > 2 / 3) {
+      // Video is wider than 2:3 — height is the constraint
       cropH = vh;
-      cropW = Math.round(vh * (4 / 5));
+      cropW = Math.round(vh * (2 / 3));
     } else {
-      // Video is taller than (or exactly) 4:5 — width is the constraint
+      // Video is taller than (or exactly) 2:3 — width is the constraint
       cropW = vw;
-      cropH = Math.round(vw * (5 / 4));
+      cropH = Math.round(vw * (3 / 2));
     }
 
     canvas.width = cropW;
@@ -267,7 +267,7 @@ function CameraView() {
             animate={{ opacity: 1 }}
             src={capturedImage}
             alt="Captured photo"
-            className="aspect-[4/5] w-full object-cover"
+            className="aspect-[2/3] w-full object-cover"
           />
         ) : (
           <>
@@ -276,7 +276,7 @@ function CameraView() {
               autoPlay
               playsInline
               muted
-              className={`aspect-[4/5] w-full object-cover ${facingMode === 'user' ? 'camera-mirror' : ''}`}
+              className={`aspect-[2/3] w-full object-cover ${facingMode === 'user' ? 'camera-mirror' : ''}`}
             />
             {cameraState === 'requesting' && (
               <div className="absolute inset-0 flex items-center justify-center bg-surface-950">

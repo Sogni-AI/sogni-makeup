@@ -5,7 +5,7 @@ export const DEFAULT_MODEL = 'qwen_image_edit_2511_fp8_lightning';
 export const DEFAULT_SETTINGS: AppSettings = {
   defaultModel: DEFAULT_MODEL,
   defaultWidth: 1024,
-  defaultHeight: 1280,
+  defaultHeight: 1536,
   defaultGuidance: 1,
   defaultSteps: 4,
   defaultSampler: 'euler',
@@ -38,7 +38,7 @@ export const IMAGE_CONSTRAINTS = {
   minDimension: 256,
   acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'],
   outputWidth: 1024,
-  outputHeight: 1280,
+  outputHeight: 1536,
 };
 
 export const SSE_CONFIG = {

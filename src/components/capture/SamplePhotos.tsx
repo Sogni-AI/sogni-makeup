@@ -47,7 +47,7 @@ function SamplePhotos() {
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleSampleClick(sample.src, sample.id)}
-            className="aspect-[4/5] overflow-hidden rounded-xl border border-primary-400/[0.06] transition-all hover:border-primary-400/15"
+            className="aspect-[2/3] overflow-hidden rounded-xl border border-primary-400/[0.06] transition-all hover:border-primary-400/15"
             aria-label={`Use ${sample.label}`}
           >
             <img
