@@ -12,6 +12,7 @@ const femalePairs: ImagePair[] = [
   { before: '/images/before3.png', after: '/images/after3.png' },
   { before: '/images/before4.png', after: '/images/after4.png' },
   { before: '/images/before5.png', after: '/images/after5.png' },
+  { before: '/images/before9.png', after: '/images/after9.png' },
 ];
 
 const malePairs: ImagePair[] = [
@@ -20,6 +21,8 @@ const malePairs: ImagePair[] = [
   { before: '/images/before7.png', after: '/images/after7.png' },
   { before: '/images/before8.png', after: '/images/after8.png' },
 ];
+
+const allPairs: ImagePair[] = [...femalePairs, ...malePairs];
 
 const containerVariants = {
   hidden: {},
@@ -67,6 +70,9 @@ function LandingHero() {
   const lastGenderRef = useRef<'female' | 'male'>('female');
   const shuffleBagRef = useRef<Record<string, number[]>>({ female: [], male: [] });
   const hoverIndexRef = useRef<Record<string, number>>({ female: 0, male: 0 });
+  const keyboardIndexRef = useRef(0);
+  const prevHoveredGenderRef = useRef<Gender | null>(null);
+  const [idleResetKey, setIdleResetKey] = useState(0);
 
   const transitionTo = useCallback((pair: ImagePair) => {
     setPortraitDisplay(prev => {
@@ -98,14 +104,41 @@ function LandingHero() {
     return pairs[nextIdx];
   }, []);
 
+  // Keyboard arrow navigation for portrait slideshow
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const len = allPairs.length;
+      if (e.key === 'ArrowRight') {
+        keyboardIndexRef.current = (keyboardIndexRef.current + 1) % len;
+      } else {
+        keyboardIndexRef.current = (keyboardIndexRef.current - 1 + len) % len;
+      }
+      const pair = allPairs[keyboardIndexRef.current];
+      transitionTo(pair);
+      // Update gender tracking so idle rotation continues from the right gender
+      lastGenderRef.current = keyboardIndexRef.current < femalePairs.length ? 'female' : 'male';
+      // Reset idle timer
+      setIdleResetKey(k => k + 1);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Portrait rotation effect
   useEffect(() => {
     if (hoveredGender) {
-      // Show the next sequential image for this gender
       const pairs = hoveredGender === 'female' ? femalePairs : malePairs;
-      const idx = hoverIndexRef.current[hoveredGender] % pairs.length;
-      transitionTo(pairs[idx]);
-      hoverIndexRef.current[hoveredGender] = idx + 1;
+
+      // Only show immediate transition when hoveredGender actually changed,
+      // not when re-triggered by keyboard reset (idleResetKey)
+      if (prevHoveredGenderRef.current !== hoveredGender) {
+        const idx = hoverIndexRef.current[hoveredGender] % pairs.length;
+        transitionTo(pairs[idx]);
+        hoverIndexRef.current[hoveredGender] = idx + 1;
+      }
+      prevHoveredGenderRef.current = hoveredGender;
       lastGenderRef.current = hoveredGender;
 
       // Rotate through same-gender pairs sequentially
@@ -116,6 +149,8 @@ function LandingHero() {
       }, 5000);
       return () => clearInterval(interval);
     }
+
+    prevHoveredGenderRef.current = null;
 
     // Idle mode: alternate genders
     const lastShown: Record<string, number> = { female: 0, male: -1 };
@@ -128,7 +163,7 @@ function LandingHero() {
       lastGenderRef.current = nextGender;
     }, 5000);
     return () => clearInterval(interval);
-  }, [hoveredGender]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hoveredGender, idleResetKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isTilesHovered) return;
