@@ -155,7 +155,12 @@ function PhotoUpload() {
           </div>
         </div>
         <p className="mt-5 text-sm font-medium text-white/50">
-          {isDragOver ? 'Drop your photo here' : 'Drop your photo here or click to browse'}
+          {isDragOver ? 'Drop your photo here' : (
+            <>
+              <span className="hidden sm:inline">Drop your photo here or click to browse</span>
+              <span className="sm:hidden">Tap to choose a photo</span>
+            </>
+          )}
         </p>
         <p className="mt-2 text-xs text-white/25">
           JPG, PNG, or WebP up to 10MB
