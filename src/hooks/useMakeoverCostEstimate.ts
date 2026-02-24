@@ -10,6 +10,13 @@ interface MakeoverCostEstimate {
   error: string | null;
 }
 
+/**
+ * Estimates the cost of a makeover generation using the Sogni SDK directly.
+ * Only returns data for authenticated (non-demo) users.
+ *
+ * For backend-proxied cost estimation (demo/unauthenticated flows),
+ * see useCostEstimation.
+ */
 export function useMakeoverCostEstimate(): MakeoverCostEstimate {
   const { isAuthenticated, authMode, getSogniClient } = useSogniAuth();
   const { tokenType } = useWallet();
@@ -57,8 +64,10 @@ export function useMakeoverCostEstimate(): MakeoverCostEstimate {
       })
       .then((result: { token: string; usd: string }) => {
         if (abortRef.current) return;
-        setTokenCost(parseFloat(result.token));
-        setUsdCost(parseFloat(result.usd));
+        const parsedToken = parseFloat(result.token);
+        const parsedUsd = parseFloat(result.usd);
+        setTokenCost(isNaN(parsedToken) ? null : parsedToken);
+        setUsdCost(isNaN(parsedUsd) ? null : parsedUsd);
         setIsLoading(false);
       })
       .catch((err: Error) => {
@@ -71,7 +80,17 @@ export function useMakeoverCostEstimate(): MakeoverCostEstimate {
     return () => {
       abortRef.current = true;
     };
-  }, [isAuthenticated, authMode, tokenType, settings.defaultModel, settings.defaultSteps, settings.defaultWidth, settings.defaultHeight, settings.defaultGuidance, settings.defaultSampler]);
+  }, [
+    isAuthenticated,
+    authMode,
+    tokenType,
+    settings.defaultModel,
+    settings.defaultSteps,
+    settings.defaultWidth,
+    settings.defaultHeight,
+    settings.defaultGuidance,
+    settings.defaultSampler,
+  ]);
 
   return { tokenCost, usdCost, isLoading, error };
 }
