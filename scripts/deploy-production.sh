@@ -132,34 +132,22 @@ ssh $REMOTE_HOST /bin/bash --noprofile --norc << 'EOF'
   # This prevents the problematic .functions file from being sourced
   set -e  # Exit on error
 
-  # Check if port 3002 is already in use and kill the process if needed
-  if lsof -i:3002 > /dev/null 2>&1; then
-    echo "🔧 Port 3002 is already in use. Stopping existing process..."
-    # Get the PID of the process using port 3002
-    PID=$(lsof -i:3002 -t)
-    if [ ! -z "$PID" ]; then
-      echo "Stopping process with PID $PID"
-      kill -9 $PID 2>/dev/null || true
-      sleep 1
-    fi
-  fi
-
   # Install backend dependencies
   cd /var/www/makeover.sogni.ai-server
   echo "📦 Installing backend dependencies..."
   # Use --no-fund and --no-audit to prevent interactive prompts
   # Use --loglevel=error to reduce output noise
   npm install --omit=dev --no-fund --no-audit --prefer-offline --loglevel=error
-  
+
   if [ $? -ne 0 ]; then
     echo "❌ npm install failed! Check network connectivity and package.json"
     exit 1
   fi
   echo "✅ Backend dependencies installed successfully"
-  
+
   # Ensure correct permissions for environment file
   chmod 600 .env
-  
+
   # Install PM2 if not already installed
   if ! command -v pm2 &> /dev/null; then
     echo "📦 Installing PM2 process manager..."
@@ -172,10 +160,40 @@ ssh $REMOTE_HOST /bin/bash --noprofile --norc << 'EOF'
   else
     echo "✅ PM2 is already installed"
   fi
-  
-  # Start or restart the backend using PM2
+
+  # Stop and remove our PM2 process first
   echo "🔧 Starting backend service with PM2..."
   pm2 delete sogni-makeover-production 2>/dev/null || true
+
+  # Kill any stale process on port 3002 (may be from another PM2 app).
+  # Retry because PM2 auto-restarts managed processes after kill -9.
+  for attempt in 1 2 3; do
+    PID=$(lsof -i:3002 -t 2>/dev/null)
+    if [ -z "$PID" ]; then
+      break
+    fi
+    echo "🔧 Port 3002 in use by PID $PID (attempt $attempt/3), killing..."
+    # Try to find and delete the PM2 process managing this PID
+    PM2_NAME=$(pm2 jlist 2>/dev/null | node -e "
+      let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{
+        try{JSON.parse(d).forEach(p=>{if(String(p.pid)===process.argv[1])console.log(p.name)});}catch(e){}
+      });" "$PID" 2>/dev/null)
+    if [ ! -z "$PM2_NAME" ]; then
+      echo "  Found PM2 process '$PM2_NAME' on port 3002, deleting from PM2..."
+      pm2 delete "$PM2_NAME" 2>/dev/null || true
+      sleep 1
+    fi
+    kill -9 $PID 2>/dev/null || true
+    sleep 2
+  done
+
+  # Verify port is free
+  if lsof -i:3002 -t > /dev/null 2>&1; then
+    echo "❌ Port 3002 is still in use after cleanup! Check PM2 processes manually."
+    pm2 list
+    exit 1
+  fi
+
   PORT=3002 pm2 start index.js --name sogni-makeover-production
   pm2 save
   
@@ -211,11 +229,20 @@ sleep 5
 # Verify deployment
 show_step "Verifying deployment"
 echo "🔍 Checking backend health via branded domain (https://makeover-api.sogni.ai)..."
-HEALTH_CHECK=$(ssh $REMOTE_HOST "curl -s -o /dev/null -w '%{http_code}' https://makeover-api.sogni.ai/health" || echo "failed")
-if [ "$HEALTH_CHECK" = "200" ]; then
-  echo "✅ Backend API is accessible via HTTPS (status code: $HEALTH_CHECK)"
+HEALTH_RESPONSE=$(ssh $REMOTE_HOST "curl -s https://makeover-api.sogni.ai/health" || echo "failed")
+HEALTH_CODE=$(ssh $REMOTE_HOST "curl -s -o /dev/null -w '%{http_code}' https://makeover-api.sogni.ai/health" || echo "failed")
+if [ "$HEALTH_CODE" = "200" ]; then
+  echo "✅ Backend API is accessible via HTTPS (status code: $HEALTH_CODE)"
+  # Verify we're running the correct application (not a stale process)
+  if echo "$HEALTH_RESPONSE" | grep -q "Server is running"; then
+    echo "✅ Confirmed: Sogni Makeover backend is responding"
+  else
+    echo "❌ WARNING: Port 3002 is responding but NOT with Sogni Makeover code!"
+    echo "   Health response: $HEALTH_RESPONSE"
+    echo "   A stale process may be occupying port 3002. Check with: ssh $REMOTE_HOST 'pm2 list'"
+  fi
 else
-  echo "❌ Backend API health check failed with status $HEALTH_CHECK"
+  echo "❌ Backend API health check failed with status $HEALTH_CODE"
   echo "⚠️ Warning: The backend may not be running correctly. Please check logs with: ssh $REMOTE_HOST 'pm2 logs sogni-makeover-production'"
 fi
 
