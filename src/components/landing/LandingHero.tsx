@@ -4,6 +4,11 @@ import { useApp } from '@/context/AppContext';
 import type { Gender } from '@/types';
 import Button from '@/components/common/Button';
 import { VenusIcon, MarsIcon } from './GenderIcons';
+import {
+  QWEN_LIGHTNING_MODEL_ID,
+  QWEN_STANDARD_MODEL_ID,
+  FLUX2_DEV_MODEL_ID,
+} from '@/constants/settings';
 
 type ImagePair = { before: string; after: string };
 
@@ -57,9 +62,16 @@ const sampleCategories = [
   { label: 'Explore', icon: '&#10023;' },
 ];
 
+const QUALITY_TIERS = [
+  { label: 'Make it fast!', modelId: QWEN_LIGHTNING_MODEL_ID },
+  { label: 'Good looks take time.', modelId: QWEN_STANDARD_MODEL_ID },
+  { label: 'Pro Tier Quality', modelId: FLUX2_DEV_MODEL_ID },
+] as const;
+
 function LandingHero() {
-  const { setCurrentView, setSelectedGender } = useApp();
-  const [showGenderSelect, setShowGenderSelect] = useState(false);
+  const { setCurrentView, setSelectedGender, settings, updateSetting } = useApp();
+  const [step, setStep] = useState<'idle' | 'gender' | 'quality'>('idle');
+  const [pendingGender, setPendingGender] = useState<Gender | null>(null);
   const [hoveredGender, setHoveredGender] = useState<Gender | null>(null);
   const [activeTileIndex, setActiveTileIndex] = useState(0);
   const [isTilesHovered, setIsTilesHovered] = useState(false);
@@ -199,7 +211,13 @@ function LandingHero() {
   const handleTilesMouseLeave = useCallback(() => setIsTilesHovered(false), []);
 
   const handleSelectGender = (gender: Gender) => {
-    setSelectedGender(gender);
+    setPendingGender(gender);
+    setStep('quality');
+  };
+
+  const handleSelectQuality = (modelId: string) => {
+    if (pendingGender) setSelectedGender(pendingGender);
+    updateSetting('defaultModel', modelId);
     setCurrentView('capture');
   };
 
@@ -317,7 +335,7 @@ function LandingHero() {
 
           <motion.div variants={itemVariants} className="mt-6 flex flex-col items-center gap-4 lg:mt-10">
             <AnimatePresence mode="wait">
-              {!showGenderSelect ? (
+              {step === 'idle' ? (
                 <motion.div
                   key="start-button"
                   initial={{ opacity: 1, scale: 1 }}
@@ -327,7 +345,7 @@ function LandingHero() {
                   <Button
                     variant="primary"
                     size="lg"
-                    onClick={() => setShowGenderSelect(true)}
+                    onClick={() => setStep('gender')}
                     className="text-lg shadow-xl shadow-primary-400/10"
                   >
                     Start Your Makeover
@@ -336,11 +354,12 @@ function LandingHero() {
                     No sign-up required &bull; Free to try
                   </p>
                 </motion.div>
-              ) : (
+              ) : step === 'gender' ? (
                 <motion.div
                   key="gender-select"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
                   className="flex items-center gap-8 sm:gap-12"
                 >
                   {/* Female icon */}
@@ -377,6 +396,40 @@ function LandingHero() {
                     <MarsIcon className="h-10 w-10 text-white/50 transition-colors duration-300 group-hover:text-primary-300 sm:h-12 sm:w-12" />
                     <span className="absolute -bottom-6 text-[10px] font-light uppercase tracking-[0.15em] text-white/0 transition-all duration-300 group-hover:text-white/40">homme</span>
                   </motion.button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="quality-select"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }}
+                  className="flex flex-col items-center gap-3"
+                >
+                  {QUALITY_TIERS.map((tier, i) => {
+                    const isCurrentDefault = settings.defaultModel === tier.modelId;
+                    return (
+                      <motion.button
+                        key={tier.modelId}
+                        aria-label={`Quality: ${tier.label}`}
+                        aria-pressed={isCurrentDefault}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{
+                          y: 0,
+                          opacity: 1,
+                          transition: { delay: 0.1 + i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+                        }}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => handleSelectQuality(tier.modelId)}
+                        className={`relative w-64 rounded-full border px-6 py-3 text-sm font-light tracking-wide backdrop-blur-sm transition-all duration-300 cursor-pointer sm:w-72 ${
+                          isCurrentDefault
+                            ? 'border-primary-400/40 bg-primary-400/[0.08] text-white/80 shadow-lg shadow-primary-400/10'
+                            : 'border-primary-400/15 bg-surface-900/60 text-white/50 hover:border-primary-400/30 hover:bg-primary-400/[0.05] hover:text-white/70'
+                        }`}
+                      >
+                        {tier.label}
+                      </motion.button>
+                    );
+                  })}
                 </motion.div>
               )}
             </AnimatePresence>
